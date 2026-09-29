@@ -60,7 +60,7 @@ import { useCollectionFilter } from '@/contexts/collection-filter-context'
 import { getAssetProfit } from '@/lib/asset-profit'
 import { getPortfolioShare, getPortfolioTotalPrimary } from '@/lib/asset-portfolio-share'
 import { formatTransactionTotal, getTransactionTotalCurrency } from '@/lib/asset-transaction-total'
-import { getNetAssetValuePrimary } from '@/lib/property-equity'
+import { getLoanHistoryDebt, getNetAssetValuePrimary } from '@/lib/property-equity'
 import { formatCurrency } from '@/lib/format'
 
 function estimateMortgagePayment(account: Account): number | null {
@@ -348,11 +348,9 @@ export default function AssetsPage() {
       for (const [propertyId, loans] of loansByProperty) {
         if (!keptIds.has(propertyId)) continue
         const date = String(next.date)
-        // Balance history is signed per account kind: manual loans walk a
-        // negative ledger, connected ones report positive-for-debt. The debt
-        // itself is what reduces equity either way.
         const mortgageBalance = loans.reduce((sum, loan) => {
-          return sum - Math.abs(mortgageHistoryByAccount.get(loan.id)?.get(date) ?? 0)
+          const balance = mortgageHistoryByAccount.get(loan.id)?.get(date) ?? 0
+          return sum - getLoanHistoryDebt(balance, loan.connection_id != null)
         }, 0)
         const grossValue = Number(next[propertyId]) || 0
         const equityValue = grossValue + mortgageBalance
