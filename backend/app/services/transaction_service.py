@@ -674,9 +674,15 @@ async def get_transaction(
     session: AsyncSession,
     transaction_id: uuid.UUID,
     workspace_id: uuid.UUID,
+    *,
+    for_update: bool = False,
 ) -> Optional[Transaction]:
-    """Fetch a single transaction by id, scoped to the workspace."""
-    result = await session.execute(
+    """Fetch a single transaction by id, scoped to the workspace.
+
+    ``for_update`` takes the row lock a mortgage breakdown save also takes, so
+    a guard that checks for a breakdown and then edits the row cannot interleave
+    with a breakdown being saved in between."""
+    query = (
         select(Transaction)
         .where(
             Transaction.id == transaction_id,
@@ -688,6 +694,9 @@ async def get_transaction(
             selectinload(Transaction.splits),
         )
     )
+    if for_update:
+        query = query.with_for_update(of=Transaction)
+    result = await session.execute(query)
     transaction = result.scalar_one_or_none()
     if transaction:
         count_result = await session.execute(
@@ -1156,6 +1165,7 @@ async def link_existing_as_transfer(
             Transaction.id.in_(transaction_ids),
             Transaction.workspace_id == workspace_id,
         )
+        .with_for_update()
     )
     txns = list(result.scalars().all())
     if len(txns) != 2:
@@ -1203,7 +1213,7 @@ async def create_transfer_counterpart(
     """
     from decimal import Decimal
 
-    anchor = await get_transaction(session, transaction_id, workspace_id)
+    anchor = await get_transaction(session, transaction_id, workspace_id, for_update=True)
     if not anchor:
         raise ValueError("Transaction not found")
     if anchor.transfer_pair_id is not None:
@@ -1337,6 +1347,8 @@ async def _get_series_transactions(
     workspace_id: uuid.UUID,
     tx: Transaction,
     apply_to: str,
+    *,
+    for_update: bool = False,
 ) -> list[Transaction]:
     """Return the sibling installments of ``tx``'s series, ordered by number.
 
@@ -1360,9 +1372,10 @@ async def _get_series_transactions(
         ]
     if apply_to == "future":
         conditions.append(Transaction.installment_number >= tx.installment_number)
-    result = await session.execute(
-        select(Transaction).where(*conditions).order_by(Transaction.installment_number)
-    )
+    query = select(Transaction).where(*conditions).order_by(Transaction.installment_number)
+    if for_update:
+        query = query.with_for_update()
+    result = await session.execute(query)
     return list(result.scalars().all())
 
 
@@ -1565,7 +1578,7 @@ async def update_transaction(
     user_id: uuid.UUID,
     data: TransactionUpdate,
 ) -> Optional[Transaction]:
-    transaction = await get_transaction(session, transaction_id, workspace_id)
+    transaction = await get_transaction(session, transaction_id, workspace_id, for_update=True)
     if not transaction:
         return None
 
@@ -1641,7 +1654,9 @@ async def update_transaction(
     rows = [transaction]
     scoped_update = None
     if apply_to != "this" and _is_installment(transaction):
-        rows = await _get_series_transactions(session, workspace_id, transaction, apply_to)
+        rows = await _get_series_transactions(
+            session, workspace_id, transaction, apply_to, for_update=True
+        )
         scoped_update = {
             k: v for k, v in update_data.items() if k in installment_scoped_fields
         }
@@ -1924,7 +1939,7 @@ async def toggle_ignore_transaction(
     other field is touched) so the edit dialog can offer ignore as a
     one-click action alongside delete, instead of bundling it into the
     form's Salvar flow."""
-    transaction = await get_transaction(session, transaction_id, workspace_id)
+    transaction = await get_transaction(session, transaction_id, workspace_id, for_update=True)
     if not transaction:
         return None
     if transaction.source == MORTGAGE_PRINCIPAL_SOURCE:
@@ -1967,7 +1982,7 @@ async def delete_transaction(
     may be "future" (this row + all later installments) or "all" (every row
     in the series); otherwise only the single row is removed. Paired transfer
     legs are cascade-deleted as before. Returns False when not found."""
-    transaction = await get_transaction(session, transaction_id, workspace_id)
+    transaction = await get_transaction(session, transaction_id, workspace_id, for_update=True)
     if not transaction:
         return False
 
@@ -1975,7 +1990,9 @@ async def delete_transaction(
     # delete and the row is part of a series.
     rows: list[Transaction] = [transaction]
     if apply_to != "this" and _is_installment(transaction):
-        rows = await _get_series_transactions(session, workspace_id, transaction, apply_to)
+        rows = await _get_series_transactions(
+            session, workspace_id, transaction, apply_to, for_update=True
+        )
     if any(row.source == MORTGAGE_PRINCIPAL_SOURCE for row in rows):
         raise ValueError("Remove the mortgage breakdown on its bank payment instead")
 
