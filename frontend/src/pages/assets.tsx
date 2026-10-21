@@ -61,7 +61,6 @@ import { useCollectionFilter } from '@/contexts/collection-filter-context'
 import { getAssetProfit } from '@/lib/asset-profit'
 import { getPortfolioShare, getPortfolioTotalPrimary } from '@/lib/asset-portfolio-share'
 import { formatTransactionTotal, getTransactionTotalCurrency } from '@/lib/asset-transaction-total'
-import { getLoanHistoryDebt, getNetAssetValuePrimary } from '@/lib/property-equity'
 import { formatCurrency } from '@/lib/format'
 
 // Renders a logo image when one is available, falling back to the asset's
