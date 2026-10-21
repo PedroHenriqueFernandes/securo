@@ -399,6 +399,7 @@ async def update_account(
     cycle_fields_changed = any(
         k in update_data for k in ("statement_close_day", "payment_due_day")
     )
+    old_type = account.type
 
     # Bank-connected accounts are managed by the sync pipeline. Beyond display
     # name and credit card metadata (limit + cycle days, which providers often
@@ -473,6 +474,7 @@ async def update_account(
     if account.type != "loan":
         account.secured_asset_id = None
 
+    opening_balance_type_changed = old_type != account.type and "loan" in {old_type, account.type}
     # When balance changes, sync the opening_balance transaction
     if "balance" in update_data:
         new_balance = update_data["balance"]
@@ -508,6 +510,16 @@ async def update_account(
                 session.add(opening_tx)
         elif opening_tx:
             await session.delete(opening_tx)
+    elif opening_balance_type_changed:
+        existing_opening = await session.execute(
+            select(Transaction).where(
+                Transaction.account_id == account_id,
+                Transaction.source == "opening_balance",
+            )
+        )
+        opening_tx = existing_opening.scalar_one_or_none()
+        if opening_tx and account.balance != Decimal("0.00"):
+            _, opening_tx.type = _opening_balance_values(account.type, account.balance)
     elif balance_date:
         existing_opening = await session.execute(
             select(Transaction).where(

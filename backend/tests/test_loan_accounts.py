@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.asset import Asset
 from app.models.user import User
-from app.models.workspace import Workspace
+from app.models.workspace import Workspace, WorkspaceMember
 
 
 async def _asset(session: AsyncSession, user: User, workspace: Workspace, asset_type: str) -> Asset:
@@ -86,6 +86,41 @@ async def test_only_a_loan_can_be_linked_to_real_estate(
 
 
 @pytest.mark.asyncio
+async def test_a_loan_cannot_link_to_a_property_in_another_workspace(
+    client: AsyncClient,
+    auth_headers,
+    session: AsyncSession,
+    test_user: User,
+):
+    other_workspace = Workspace(
+        id=uuid.uuid4(),
+        name="Other household",
+        kind="personal",
+        created_by_user_id=test_user.id,
+    )
+    session.add(other_workspace)
+    await session.flush()
+    session.add(
+        WorkspaceMember(
+            id=uuid.uuid4(),
+            workspace_id=other_workspace.id,
+            user_id=test_user.id,
+            role="owner",
+        )
+    )
+    home = await _asset(session, test_user, other_workspace, "real_estate")
+
+    response = await client.post(
+        "/api/accounts",
+        headers=auth_headers,
+        json={"name": "Loan", "type": "loan", "secured_asset_id": str(home.id)},
+    )
+
+    assert response.status_code == 400
+    assert "same workspace" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
 async def test_a_loan_can_be_linked_unlinked_and_retyped(
     client: AsyncClient,
     auth_headers,
@@ -124,6 +159,30 @@ async def test_a_loan_can_be_linked_unlinked_and_retyped(
     assert relinked.status_code == 200
     assert retyped.status_code == 200
     assert retyped.json()["secured_asset_id"] is None
+
+
+@pytest.mark.asyncio
+async def test_retyping_account_to_loan_resigns_opening_balance_without_balance_update(
+    client: AsyncClient,
+    auth_headers,
+):
+    created = await client.post(
+        "/api/accounts",
+        headers=auth_headers,
+        json={"name": "Mortgage", "type": "checking", "balance": 200000, "currency": "EUR"},
+    )
+    assert created.status_code == 201, created.text
+
+    updated = await client.patch(
+        f"/api/accounts/{created.json()['id']}",
+        headers=auth_headers,
+        json={"type": "loan"},
+    )
+
+    assert updated.status_code == 200, updated.text
+    accounts = (await client.get("/api/accounts", headers=auth_headers)).json()
+    mortgage = next(row for row in accounts if row["id"] == created.json()["id"])
+    assert mortgage["current_balance"] == -200000
 
 
 @pytest.mark.asyncio
