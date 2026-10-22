@@ -9,7 +9,7 @@ from sqlalchemy.orm import contains_eager
 
 from app.core.app_clock import app_today
 from app.models.account import Account
-from app.models.asset import Asset
+from app.models.asset import LOAN_COLLATERAL_TYPES, Asset
 from app.models.bank_connection import BankConnection
 from app.models.credit_card_bill import CreditCardBill
 from app.models.transaction import Transaction
@@ -382,6 +382,20 @@ async def update_account(
     new_type = update_data.get("type", account.type)
     if account.connection_id is not None and new_type == "loan":
         raise ValueError("Bank-connected accounts cannot be loans yet")
+    # Switching between a loan and any other type flips what the balance means
+    # (money held vs. money owed). That is safe for an account that only has
+    # its opening balance; with real history it would silently reinterpret it.
+    if new_type != account.type and "loan" in {account.type, new_type}:
+        has_history = await session.scalar(
+            select(Transaction.id)
+            .where(
+                Transaction.account_id == account.id,
+                Transaction.source != "opening_balance",
+            )
+            .limit(1)
+        )
+        if has_history is not None:
+            raise ValueError("An account with transactions cannot switch to or from a loan")
     # The property link is dropped when the account stops being a loan, so only
     # a link sent with this edit is checked.
     await _validate_secured_asset(
@@ -546,8 +560,8 @@ async def _validate_secured_asset(
     asset = await session.scalar(
         select(Asset).where(Asset.id == asset_id, Asset.workspace_id == workspace_id)
     )
-    if asset is None or asset.type != "real_estate":
-        raise ValueError("Linked property must be real estate in the same workspace")
+    if asset is None or asset.type not in LOAN_COLLATERAL_TYPES:
+        raise ValueError("Linked asset must be a property or vehicle in the same workspace")
 
 
 async def _recompute_effective_dates(session: AsyncSession, account: Account) -> None:

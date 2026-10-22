@@ -42,7 +42,7 @@ class Account(Base):
     # never blanked by a missing value.
     stable_external_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     type: Mapped[str] = mapped_column(String(50))  # checking, savings, credit_card, loan
-    # Loan accounts only: the real-estate asset this loan is secured against.
+    # Loan accounts only: the property or vehicle this loan is secured against.
     secured_asset_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("assets.id", ondelete="SET NULL"), nullable=True, index=True
     )

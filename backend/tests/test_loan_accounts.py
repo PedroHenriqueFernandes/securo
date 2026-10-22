@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+from datetime import date, timedelta
 
 import pytest
 from httpx import AsyncClient
@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.asset import Asset
+from app.core.app_clock import app_today
 from app.models.transaction import Transaction
 from app.models.user import User
 from app.models.workspace import Workspace, WorkspaceMember
@@ -57,7 +58,7 @@ async def test_loan_can_be_linked_to_a_property_and_shows_as_debt(
 
 
 @pytest.mark.asyncio
-async def test_only_a_loan_can_be_linked_to_real_estate(
+async def test_only_a_loan_can_be_linked_to_a_property_or_vehicle(
     client: AsyncClient,
     auth_headers,
     session: AsyncSession,
@@ -300,3 +301,81 @@ async def test_retyping_a_loan_also_moves_the_opening_balance_date(
     assert opening is not None
     assert opening.type == "credit"
     assert opening.date == date(2026, 2, 20)
+
+
+@pytest.mark.asyncio
+async def test_a_car_loan_can_be_linked_to_a_vehicle(
+    client: AsyncClient,
+    auth_headers,
+    session: AsyncSession,
+    test_user: User,
+    test_workspace: Workspace,
+):
+    car = await _asset(session, test_user, test_workspace, "vehicle")
+
+    created = await client.post(
+        "/api/accounts",
+        headers=auth_headers,
+        json={"name": "Car financing", "type": "loan", "balance": 30000, "secured_asset_id": str(car.id)},
+    )
+
+    assert created.status_code == 201, created.text
+    assert created.json()["secured_asset_id"] == str(car.id)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("from_type,to_type", [("loan", "checking"), ("checking", "loan")])
+async def test_an_account_with_transactions_cannot_switch_to_or_from_a_loan(
+    client: AsyncClient,
+    auth_headers,
+    from_type: str,
+    to_type: str,
+):
+    account = (
+        await client.post(
+            "/api/accounts",
+            headers=auth_headers,
+            json={"name": "Account", "type": from_type, "balance": 1000},
+        )
+    ).json()
+    posted = await client.post(
+        "/api/transactions",
+        headers=auth_headers,
+        json={
+            "account_id": account["id"],
+            "description": "Payment",
+            "amount": 100,
+            "type": "credit",
+            "date": app_today().isoformat(),
+        },
+    )
+    assert posted.status_code == 201, posted.text
+
+    retyped = await client.patch(
+        f"/api/accounts/{account['id']}", headers=auth_headers, json={"type": to_type}
+    )
+
+    assert retyped.status_code == 400
+    assert "cannot switch" in retyped.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_balance_history_leaves_loans_out(client: AsyncClient, auth_headers):
+    month_start = app_today().replace(day=1)
+    opened = (month_start - timedelta(days=1)).replace(day=1)
+    for body in (
+        {"name": "Checking", "type": "checking", "balance": 1000},
+        {"name": "Mortgage", "type": "loan", "balance": 200000},
+    ):
+        created = await client.post(
+            "/api/accounts",
+            headers=auth_headers,
+            json={**body, "balance_date": opened.isoformat()},
+        )
+        assert created.status_code == 201, created.text
+
+    history = await client.get("/api/dashboard/balance-history", headers=auth_headers)
+
+    assert history.status_code == 200, history.text
+    first_day = next(point for point in history.json()["current"] if point["day"] == 1)
+    assert first_day["balance"] == 1000

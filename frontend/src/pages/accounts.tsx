@@ -40,6 +40,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { useCollectionFilter } from '@/contexts/collection-filter-context'
 import { useWorkspace } from '@/contexts/workspace-context'
 import { formatCurrency } from '@/lib/format'
+import { LOAN_COLLATERAL_TYPES } from '@/lib/property-equity'
 
 // Account types offered in the create/edit dialog. Shared between the manual
 // type selector and the connected-account override selector so the list stays
@@ -191,7 +192,12 @@ export default function AccountsPage() {
       setEditingAccount(null)
       toast.success(t('accounts.updated'))
     },
-    onError: () => toast.error(t('common.error')),
+    onError: (_err, variables) => {
+      const original = editingAccount?.type
+      const crossesLoan = !!original && !!variables.type && variables.type !== original
+        && (variables.type === 'loan' || original === 'loan')
+      toast.error(crossesLoan ? t('accounts.loanRetypeBlocked') : t('common.error'))
+    },
   })
 
   const deleteMutation = useMutation({
@@ -714,7 +720,7 @@ function AccountDialog({
   const [paymentDueDay, setPaymentDueDay] = useState(account?.payment_due_day?.toString() ?? '')
   const [securedAssetId, setSecuredAssetId] = useState(account?.secured_asset_id ?? '')
 
-  const properties = (assetsList ?? []).filter((asset) => asset.type === 'real_estate')
+  const properties = (assetsList ?? []).filter((asset) => LOAN_COLLATERAL_TYPES.includes(asset.type))
   // Send the link the select shows: a saved id that is no longer a listed
   // property (it changed type) would otherwise be resent and rejected.
   const securedAssetIsListed = !!securedAssetId && (!assetsList || properties.some((asset) => asset.id === securedAssetId))
@@ -810,6 +816,9 @@ function AccountDialog({
                       <option key={o.value} value={o.value}>{t(o.labelKey)}</option>
                     ))}
                   </select>
+                  {account && type !== account.type && (type === 'loan' || account.type === 'loan') && (
+                    <p className="text-xs text-muted-foreground">{t('accounts.loanRetypeHint')}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>{t('accounts.currency')}</Label>

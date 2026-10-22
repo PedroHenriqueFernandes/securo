@@ -54,6 +54,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { PageHeader } from '@/components/page-header'
 import { PropertyEquitySummary } from '@/components/property-equity-summary'
+import { LOAN_COLLATERAL_TYPES } from '@/lib/property-equity'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { useAuth } from '@/contexts/auth-context'
 import { useWorkspace } from '@/contexts/workspace-context'
@@ -852,7 +853,7 @@ export default function AssetsPage() {
 
         {isExpanded && (
           <>
-          {asset.type === 'real_estate' && (
+          {LOAN_COLLATERAL_TYPES.includes(asset.type) && (
             <PropertyEquitySummary
               asset={asset}
               loans={accountsList ?? []}

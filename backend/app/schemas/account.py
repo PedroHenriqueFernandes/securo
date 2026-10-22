@@ -11,7 +11,7 @@ class AccountBase(BaseModel):
     type: str
     balance: Decimal
     currency: str = "USD"
-    # Loan accounts only: the real-estate asset the loan is secured against.
+    # Loan accounts only: the property or vehicle the loan is secured against.
     secured_asset_id: Optional[uuid.UUID] = None
 
 

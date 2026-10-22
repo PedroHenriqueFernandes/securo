@@ -1,6 +1,9 @@
 import type { Account, Asset } from '@/types'
 import { getAssetValuePrimary } from '@/lib/asset-portfolio-share'
 
+/** Asset types a loan can be secured against (a mortgage, a car financing). */
+export const LOAN_COLLATERAL_TYPES: readonly string[] = ['real_estate', 'vehicle']
+
 type ValuedProperty = Pick<Asset, 'id' | 'current_value' | 'current_value_primary'>
 type SecuredLoan = Pick<Account, 'type' | 'secured_asset_id' | 'current_balance' | 'balance_primary'>
 

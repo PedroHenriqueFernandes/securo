@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.app_clock import app_today
 from app.models.account import Account
-from app.models.asset import Asset
+from app.models.asset import LOAN_COLLATERAL_TYPES, Asset
 from app.models.asset_transaction import AssetTransaction
 from app.models.asset_value import AssetValue
 from app.models.user import User
@@ -671,9 +671,9 @@ async def update_asset(
     for key, value in update_data.items():
         setattr(asset, key, value)
 
-    # Only real estate can secure a loan, so a property that changes type
-    # releases its loans instead of leaving them linked to a non-property.
-    if asset.type != "real_estate":
+    # Only a property or a vehicle can secure a loan, so an asset that changes
+    # to another type releases its loans instead of leaving them linked to it.
+    if asset.type not in LOAN_COLLATERAL_TYPES:
         await session.execute(
             sa_update(Account)
             .where(Account.secured_asset_id == asset.id)
