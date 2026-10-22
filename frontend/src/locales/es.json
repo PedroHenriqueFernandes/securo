@@ -944,6 +944,7 @@
     "searchPlaceholder": "Buscar transacciones...",
     "clearFilters": "Borrar filtros",
     "exportCsv": "Exportar CSV",
+    "refresh": "Actualizar",
     "exportSelected": "Exportar seleccionadas ({{count}})",
     "exporting": "Exportando...",
     "exportSuccess": "Transacciones exportadas correctamente",
@@ -1170,6 +1171,7 @@
     "multiInstitutionLink_many": "{{provider}} · {{count}} instituciones",
     "multiInstitutionLink_other": "{{provider}} · {{count}} instituciones",
     "sync": "Sincronizar",
+    "retrySync": "Reintentar sincronización",
     "disconnect": "Desconectar",
     "addManual": "Agregar cuenta",
     "editAccount": "Editar cuenta",
@@ -1248,6 +1250,7 @@
     "updated": "Cuenta actualizada",
     "deleted": "Cuenta eliminada",
     "syncDone": "Sincronización completada",
+    "syncRateLimited": "Límite diario del banco alcanzado, no se ha obtenido ningún dato nuevo. Inténtalo más tarde.",
     "syncError": "Error de sincronización",
     "connected": "Banco conectado con éxito",
     "connectError": "Error al conectar el banco",
@@ -1790,7 +1793,11 @@
     "errors": {
       "invalid_date": "Formato de fecha no válido",
       "no_amount": "Sin importe de entrada o salida",
-      "invalid_amount": "Formato de importe no válido"
+      "invalid_amount": "Formato de importe no válido",
+      "invalid_fx_rate": "Tipo de cambio no válido",
+      "ambiguous_amount": "Entrada y salida con valor",
+      "conflicting_amount": "Campos de importe en conflicto",
+      "invalid_direction": "Indicador de crédito/débito no válido"
     },
     "selectAll": "Seleccionar todo"
   },
@@ -1843,6 +1850,7 @@
       "invalid_date": "fecha ilegible",
       "invalid_quantity": "cantidad ilegible",
       "invalid_price": "precio ilegible",
+      "invalid_fee": "comisión ilegible",
       "invalid_kind": "compra/venta no reconocida",
       "unknown_ticker": "ticker no encontrado por el proveedor de precios",
       "oversell": "venta mayor que la posición"

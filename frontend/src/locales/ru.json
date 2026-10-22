@@ -950,6 +950,7 @@
     "searchPlaceholder": "Поиск транзакций...",
     "clearFilters": "Сбросить фильтры",
     "exportCsv": "Экспорт CSV",
+    "refresh": "Обновить",
     "exportSelected": "Экспортировать выбранные ({{count}})",
     "exporting": "Экспорт...",
     "exportSuccess": "Транзакции успешно экспортированы",
@@ -1183,6 +1184,7 @@
     "multiInstitutionLink_many": "{{provider}} · {{count}} учреждений",
     "multiInstitutionLink_other": "{{provider}} · {{count}} учреждения",
     "sync": "Синхронизировать",
+    "retrySync": "Повторить синхронизацию",
     "disconnect": "Отключить",
     "addManual": "Добавить счёт",
     "editAccount": "Редактировать счёт",
@@ -1261,6 +1263,7 @@
     "updated": "Счёт обновлён",
     "deleted": "Счёт удалён",
     "syncDone": "Синхронизация завершена",
+    "syncRateLimited": "Достигнут суточный лимит банка, новые данные не получены. Повторите попытку позже.",
     "syncError": "Синхронизация не удалась",
     "connected": "Банк успешно подключён",
     "connectError": "Не удалось подключить банк",
@@ -1803,7 +1806,11 @@
     "errors": {
       "invalid_date": "Неверный формат даты",
       "no_amount": "Нет суммы прихода или расхода",
-      "invalid_amount": "Неверный формат суммы"
+      "invalid_amount": "Неверный формат суммы",
+      "invalid_fx_rate": "Неверный курс валюты",
+      "ambiguous_amount": "Заполнены приход и расход",
+      "conflicting_amount": "Конфликтующие поля сумм",
+      "invalid_direction": "Неверный индикатор кредита/дебета"
     },
     "selectAll": "Выбрать все"
   },
@@ -1856,6 +1863,7 @@
       "invalid_date": "нечитаемая дата",
       "invalid_quantity": "нечитаемое количество",
       "invalid_price": "нечитаемая цена",
+      "invalid_fee": "нечитаемая комиссия",
       "invalid_kind": "не распознана покупка/продажа",
       "unknown_ticker": "тикер не найден у поставщика котировок",
       "oversell": "продажа больше позиции"

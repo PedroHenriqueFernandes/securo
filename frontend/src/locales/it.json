@@ -944,6 +944,7 @@
     "searchPlaceholder": "Cerca transazioni...",
     "clearFilters": "Cancella filtri",
     "exportCsv": "Esporta CSV",
+    "refresh": "Aggiorna",
     "exportSelected": "Esporta selezionate ({{count}})",
     "exporting": "Esportazione...",
     "exportSuccess": "Transazioni esportate con successo",
@@ -1170,6 +1171,7 @@
     "multiInstitutionLink_many": "{{provider}} · {{count}} istituti",
     "multiInstitutionLink_other": "{{provider}} · {{count}} istituti",
     "sync": "Sincronizza",
+    "retrySync": "Riprova la sincronizzazione",
     "disconnect": "Disconnetti",
     "addManual": "Aggiungi conto",
     "editAccount": "Modifica conto",
@@ -1248,6 +1250,7 @@
     "updated": "Conto aggiornato",
     "deleted": "Conto eliminato",
     "syncDone": "Sincronizzazione completata",
+    "syncRateLimited": "Limite giornaliero della banca raggiunto, nessun dato nuovo recuperato. Riprova più tardi.",
     "syncError": "Sincronizzazione fallita",
     "connected": "Banca collegata con successo",
     "connectError": "Impossibile collegare la banca",
@@ -1790,7 +1793,11 @@
     "errors": {
       "invalid_date": "Formato data non valido",
       "no_amount": "Nessun importo in entrata o in uscita",
-      "invalid_amount": "Formato importo non valido"
+      "invalid_amount": "Formato importo non valido",
+      "invalid_fx_rate": "Tasso di cambio non valido",
+      "ambiguous_amount": "Entrata e uscita entrambe compilate",
+      "conflicting_amount": "Campi di importo in conflitto",
+      "invalid_direction": "Indicatore accredito/addebito non valido"
     },
     "selectAll": "Seleziona tutto"
   },
@@ -1843,6 +1850,7 @@
       "invalid_date": "data illeggibile",
       "invalid_quantity": "quantità illeggibile",
       "invalid_price": "prezzo illeggibile",
+      "invalid_fee": "commissione illeggibile",
       "invalid_kind": "acquisto/vendita non riconosciuto",
       "unknown_ticker": "ticker non trovato dal fornitore di prezzi",
       "oversell": "vendita superiore alla posizione"

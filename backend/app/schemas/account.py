@@ -145,6 +145,14 @@ class AccountSummary(BaseModel):
     fx_fallback: bool = False
 
 
+class AccountRunningBalancePoint(BaseModel):
+    """End-of-day balance on the account page's walk (#1202)."""
+
+    date: date
+    balance: float
+    balance_primary: Optional[float] = None
+
+
 class LoanInstallmentRead(BaseModel):
     number: int
     due_date: date

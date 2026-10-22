@@ -143,8 +143,14 @@ export default function AccountsPage() {
     onSuccess: (result) => {
       invalidateFinancialQueries(queryClient)
       queryClient.invalidateQueries({ queryKey: ['connections'] })
-      toast.success(t('accounts.syncDone'))
-      const merged = (result as BankConnection & { merged_count?: number })?.merged_count
+      // The provider can throttle the sync (429) and still return success
+      // without pulling anything: say so instead of a false "Sync completed".
+      if (result.sync_outcome === 'rate_limited') {
+        toast.warning(t('accounts.syncRateLimited'))
+      } else {
+        toast.success(t('accounts.syncDone'))
+      }
+      const merged = result?.merged_count
       if (merged && merged > 0) {
         toast.info(t('accounts.mergedCount', { count: merged }))
       }
@@ -330,6 +336,10 @@ export default function AccountsPage() {
               {connectionsList.map((conn) => {
                 const connAccounts = bankAccounts.filter((a) => a.connection_id === conn.id)
                 const needsReconnect = conn.status !== 'active'
+                // An error state does not always mean the token is dead: an
+                // upstream auth issue can be fixed without re-pasting, so the
+                // row offers a plain retry next to the reconnect action.
+                const canRetrySync = conn.status === 'error'
                 const syncPending = syncMutation.isPending && syncMutation.variables === conn.id
                 return (
                   <div key={conn.id} className="bg-card rounded-xl border border-border shadow-sm">
@@ -373,6 +383,19 @@ export default function AccountsPage() {
                           >
                             <Settings size={14} />
                           </Button>
+                          {canRetrySync && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                              onClick={() => syncMutation.mutate(conn.id)}
+                              disabled={syncPending}
+                              title={t('accounts.retrySync')}
+                              aria-label={t('accounts.retrySync')}
+                            >
+                              <RefreshCw size={14} className={syncPending ? 'animate-spin' : ''} />
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="sm"

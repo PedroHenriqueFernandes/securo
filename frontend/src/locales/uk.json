@@ -950,6 +950,7 @@
     "searchPlaceholder": "Пошук транзакцій...",
     "clearFilters": "Скинути фільтри",
     "exportCsv": "Експорт CSV",
+    "refresh": "Оновити",
     "exportSelected": "Експортувати обрані ({{count}})",
     "exporting": "Експорт...",
     "exportSuccess": "Транзакції успішно експортовано",
@@ -1183,6 +1184,7 @@
     "multiInstitutionLink_many": "{{provider}} · {{count}} установ",
     "multiInstitutionLink_other": "{{provider}} · {{count}} установи",
     "sync": "Синхронізувати",
+    "retrySync": "Повторити синхронізацію",
     "disconnect": "Відключити",
     "addManual": "Додати рахунок",
     "editAccount": "Редагувати рахунок",
@@ -1261,6 +1263,7 @@
     "updated": "Рахунок оновлено",
     "deleted": "Рахунок видалено",
     "syncDone": "Синхронізацію завершено",
+    "syncRateLimited": "Досягнуто добовий ліміт банку, нових даних не отримано. Спробуйте пізніше.",
     "syncError": "Синхронізація не вдалася",
     "connected": "Банк успішно підключено",
     "connectError": "Не вдалося підключити банк",
@@ -1803,7 +1806,11 @@
     "errors": {
       "invalid_date": "Недійсний формат дати",
       "no_amount": "Немає суми надходження або витрати",
-      "invalid_amount": "Недійсний формат суми"
+      "invalid_amount": "Недійсний формат суми",
+      "invalid_fx_rate": "Недійсний курс валют",
+      "ambiguous_amount": "Заповнено надходження і витрати",
+      "conflicting_amount": "Конфліктні поля сум",
+      "invalid_direction": "Некоректний індикатор кредиту/дебету"
     },
     "selectAll": "Вибрати все"
   },
@@ -1856,6 +1863,7 @@
       "invalid_date": "нечитабельна дата",
       "invalid_quantity": "нечитабельна кількість",
       "invalid_price": "нечитабельна ціна",
+      "invalid_fee": "нечитабельна комісія",
       "invalid_kind": "не розпізнано купівлю/продаж",
       "unknown_ticker": "тикер не знайдено в постачальника котирувань",
       "oversell": "продаж більший за позицію"
