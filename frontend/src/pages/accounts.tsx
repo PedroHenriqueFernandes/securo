@@ -796,6 +796,8 @@ export function AccountDialog({
   const [paymentDueDay, setPaymentDueDay] = useState(account?.payment_due_day?.toString() ?? '')
   const [securedAssetId, setSecuredAssetId] = useState(account?.secured_asset_id ?? '')
   const [loanTerms, setLoanTerms] = useState(() => loanTermsFrom(account, account?.currency ?? userCurrency))
+  // Opened by the user, not by the amount: clearing the amount must not collapse it.
+  const [termsOpen, setTermsOpen] = useState(() => account?.loan_original_amount != null)
   const setLoanTerm = <K extends keyof LoanTermsForm>(key: K, value: LoanTermsForm[K]) =>
     setLoanTerms((prev) => ({ ...prev, [key]: value }))
 
@@ -821,6 +823,7 @@ export function AccountDialog({
     setPaymentDueDay(account?.payment_due_day?.toString() ?? '')
     setSecuredAssetId(account?.secured_asset_id ?? '')
     setLoanTerms(loanTermsFrom(account, account?.currency ?? userCurrency))
+    setTermsOpen(account?.loan_original_amount != null)
   }
 
   return (
@@ -973,7 +976,11 @@ export function AccountDialog({
                   <option key={asset.id} value={asset.id}>{asset.name}</option>
                 ))}
               </select>
-              <details className="rounded-lg border border-border p-3 mt-2" open={!!loanTerms.amount}>
+              <details
+                className="rounded-lg border border-border p-3 mt-2"
+                open={termsOpen}
+                onToggle={(e) => setTermsOpen(e.currentTarget.open)}
+              >
                 <summary className="cursor-pointer text-sm font-medium">{t('accounts.loanTerms')}</summary>
                 <div className="grid grid-cols-2 gap-3 pt-3">
                   <div className="space-y-1">

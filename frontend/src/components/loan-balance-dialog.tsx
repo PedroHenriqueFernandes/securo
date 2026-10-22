@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -41,11 +41,9 @@ export function LoanBalanceDialog({
   // The backend checks the date against today in the workspace timezone.
   const today = todayInTimezone(useEffectiveTimezone())
   const [balance, setBalance] = useState(String(currentDebt))
-  const [date, setDate] = useState(today)
-  const dateTouched = useRef(false)
-  useEffect(() => {
-    if (!dateTouched.current) setDate(today)
-  }, [today])
+  // Follows the workspace date until the user picks one.
+  const [pickedDate, setPickedDate] = useState<string | null>(null)
+  const date = pickedDate ?? today
   const [description, setDescription] = useState(t('loans.adjustDefaultDescription'))
   const [categoryId, setCategoryId] = useState('')
 
@@ -108,13 +106,7 @@ export function LoanBalanceDialog({
             </div>
             <div className="space-y-1">
               <Label>{t('loans.adjustDate')}</Label>
-              <DatePickerInput
-                value={date}
-                onChange={(value) => {
-                  dateTouched.current = true
-                  setDate(value)
-                }}
-              />
+              <DatePickerInput value={date} onChange={setPickedDate} />
             </div>
           </div>
           <div className="space-y-1">
