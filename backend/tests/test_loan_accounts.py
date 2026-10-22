@@ -297,5 +297,6 @@ async def test_retyping_a_loan_also_moves_the_opening_balance_date(
             Transaction.source == "opening_balance",
         )
     )
+    assert opening is not None
     assert opening.type == "credit"
     assert opening.date == date(2026, 2, 20)
