@@ -1355,7 +1355,21 @@
     "colPayment": "Payment",
     "colInterest": "Interest",
     "colPrincipal": "Principal",
-    "colBalance": "Balance"
+    "colBalance": "Balance",
+    "adjustAction": "Update balance",
+    "adjustTitle": "Update the balance owed",
+    "adjustHint": "Enter what the lender says you owe. Securo records the difference as one transaction on this loan, so indexed or renegotiated contracts stay in line with the lender.",
+    "adjustBalance": "Balance owed",
+    "adjustDate": "Statement date",
+    "adjustDescription": "Description",
+    "adjustDefaultDescription": "Indexation and interest",
+    "adjustCategory": "Category (when the debt grew)",
+    "adjustOnDate": "The difference is computed against the balance on that date.",
+    "adjustPreviewGrew": "The debt grew {{amount}}: it is recorded as a cost of the loan.",
+    "adjustPreviewFell": "The debt fell {{amount}}: the balance is corrected without counting as income.",
+    "adjustPreviewMatches": "The ledger already matches this balance.",
+    "adjustRecorded": "Balance updated: {{amount}} recorded",
+    "adjustMatched": "The ledger already matched, nothing was recorded"
   },
   "connections": {
     "settings": "Connection settings",

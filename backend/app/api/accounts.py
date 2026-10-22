@@ -15,6 +15,8 @@ from app.core.workspace_context import (
 from app.schemas.account import (
     AccountCreate,
     AccountRead,
+    LoanBalanceAdjustment,
+    LoanBalanceUpdate,
     LoanScheduleRead,
     AccountSummary,
     AccountUpdate,
@@ -148,6 +150,24 @@ async def get_loan_schedule(
     if schedule is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan account not found")
     return schedule
+
+
+@router.post("/{account_id}/loan-balance", response_model=LoanBalanceAdjustment)
+async def adjust_loan_balance(
+    account_id: uuid.UUID,
+    data: LoanBalanceUpdate,
+    ctx: WorkspaceContext = Depends(current_writable_workspace),
+    session: AsyncSession = Depends(get_async_session),
+):
+    try:
+        result = await account_service.adjust_loan_balance(
+            session, account_id, ctx.workspace.id, ctx.user_id, data
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan account not found")
+    return result
 
 
 @router.get("/{account_id}", response_model=AccountRead)

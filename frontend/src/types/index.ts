@@ -1804,6 +1804,21 @@ export interface LoanInstallment {
   balance: number
 }
 
+/** The lender's balance on a date, sent to bring a loan's ledger in line. */
+export interface LoanBalanceUpdate {
+  balance: number
+  date: string
+  description: string
+  category_id?: string | null
+}
+
+/** What the backend recorded: positive when the debt grew, 0 when it already matched. */
+export interface LoanBalanceAdjustment {
+  adjustment: number
+  current_debt: number
+  transaction_id: string | null
+}
+
 /** A loan's payment schedule, computed by the backend from its contract terms. */
 export interface LoanSchedule {
   account_id: string

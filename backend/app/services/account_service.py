@@ -13,7 +13,7 @@ from app.models.asset import LOAN_COLLATERAL_TYPES, Asset
 from app.models.bank_connection import BankConnection
 from app.models.credit_card_bill import CreditCardBill
 from app.models.transaction import Transaction
-from app.schemas.account import AccountCreate, AccountUpdate
+from app.schemas.account import AccountCreate, AccountUpdate, LoanBalanceUpdate
 from app.services._query_filters import (
     counts_as_pnl,
     counts_in_current_balance,
@@ -24,6 +24,7 @@ from app.services._query_filters import (
 )
 from app.services import loan_schedule
 from app.services.credit_card_service import apply_effective_date, compute_available_credit, get_cycle_dates
+from app.services.fx_rate_service import stamp_primary_amount
 from app.models.category import Category
 
 # Loan accounts only: contract terms the payment schedule is computed from.
@@ -1316,3 +1317,68 @@ async def get_loan_schedule(
         installments=[installment(row) for row in schedule],
     )
     return payload
+
+
+async def adjust_loan_balance(
+    session: AsyncSession,
+    account_id: uuid.UUID,
+    workspace_id: uuid.UUID,
+    user_id: uuid.UUID,
+    data: LoanBalanceUpdate,
+) -> Optional[dict]:
+    """Record the gap between the lender's balance and the ledger's.
+
+    Indexed or renegotiated contracts move in ways the schedule cannot
+    compute, so the lender's statement wins: the difference becomes one
+    ordinary transaction on the loan. A debt that grew is a cost of the loan
+    (indexation, interest, fees) and counts as an expense. A debt that fell
+    without a recorded payment is most often a payment missing from the
+    ledger, so it moves the balance but stays out of income.
+
+    None when the account does not exist in this workspace or is not a loan.
+    """
+    account = await get_account(session, account_id, workspace_id)
+    if not account or account.type != "loan":
+        return None
+    if data.date > app_today():
+        raise ValueError("The statement date cannot be in the future")
+
+    owed = -Decimal(str(await _account_balance_at(session, account.id, data.date, account.currency)))
+    difference = (data.balance - owed).quantize(Decimal("0.01"))
+    transaction = None
+    if difference != 0:
+        grew = difference > 0
+        category_id = data.category_id if grew else None
+        if category_id is not None:
+            found = await session.execute(
+                select(Category.id).where(Category.id == category_id, Category.workspace_id == workspace_id)
+            )
+            if found.scalar_one_or_none() is None:
+                raise ValueError("Category not found")
+        transaction = Transaction(
+            user_id=user_id,
+            workspace_id=workspace_id,
+            account_id=account.id,
+            category_id=category_id,
+            description=data.description,
+            amount=abs(difference),
+            currency=account.currency,
+            date=data.date,
+            type="debit" if grew else "credit",
+            source="manual",
+            status="posted",
+            exclude_from_pnl=not grew,
+        )
+        apply_effective_date(transaction, account)
+        session.add(transaction)
+        await session.flush()
+        await stamp_primary_amount(session, user_id, transaction)
+        await session.commit()
+
+    refreshed = await get_account_with_balances(session, account.id, workspace_id)
+    assert refreshed is not None
+    return {
+        "adjustment": float(difference),
+        "current_debt": float(max(Decimal("0"), -Decimal(str(refreshed["current_balance"])))),
+        "transaction_id": transaction.id if transaction else None,
+    }

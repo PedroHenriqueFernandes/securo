@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
+import { LoanBalanceDialog } from '@/components/loan-balance-dialog'
 import { accounts } from '@/lib/api'
 import { formatCurrency } from '@/lib/format'
 
@@ -11,21 +12,25 @@ const ON_SCHEDULE_TOLERANCE = 1
 /**
  * A loan's contract next to its real balance: next payment, what is left,
  * payoff by the contract and at the current pace, and the full schedule.
- * The backend computes it from the account's contract terms on read.
+ * The backend computes it from the account's contract terms on read. The
+ * lender's statement can always correct the balance, with or without terms.
  */
 export function LoanScheduleCard({
   accountId,
   locale,
   dateLocale,
   mask,
+  canWrite = false,
 }: {
   accountId: string
   locale: string
   dateLocale: string
   mask: (value: string) => string
+  canWrite?: boolean
 }) {
   const { t } = useTranslation()
   const [showSchedule, setShowSchedule] = useState(false)
+  const [adjusting, setAdjusting] = useState(false)
   const { data } = useQuery({
     queryKey: ['accounts', accountId, 'loan-schedule'],
     queryFn: () => accounts.loanSchedule(accountId),
@@ -34,11 +39,35 @@ export function LoanScheduleCard({
 
   const money = (value: number) => mask(formatCurrency(value, data.currency, locale))
   const day = (value: string) => new Date(value + 'T00:00:00').toLocaleDateString(dateLocale)
+  const adjust = canWrite && (
+    <>
+      <button
+        type="button"
+        className="text-xs font-medium text-primary hover:underline"
+        onClick={() => setAdjusting(true)}
+      >
+        {t('loans.adjustAction')}
+      </button>
+      {adjusting && (
+        <LoanBalanceDialog
+          open
+          onClose={() => setAdjusting(false)}
+          accountId={accountId}
+          currentDebt={data.current_debt}
+          currency={data.currency}
+          locale={locale}
+        />
+      )}
+    </>
+  )
 
   if (!data.configured) {
     return (
       <div className="bg-card rounded-xl border border-border shadow-sm p-4 space-y-1">
-        <h2 className="text-sm font-semibold">{t('loans.title')}</h2>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-sm font-semibold">{t('loans.title')}</h2>
+          {adjust}
+        </div>
         <p className="text-sm text-muted-foreground">{t('loans.notConfigured')}</p>
       </div>
     )
@@ -58,11 +87,14 @@ export function LoanScheduleCard({
     <div className="bg-card rounded-xl border border-border shadow-sm">
       <div className="flex items-center justify-between gap-3 px-4 pt-4">
         <h2 className="text-sm font-semibold">{t('loans.title')}</h2>
-        <span
-          className={`text-xs font-medium ${!data.paid_off && aheadBy <= -ON_SCHEDULE_TOLERANCE ? 'text-rose-500' : 'text-emerald-600'}`}
-        >
-          {status}
-        </span>
+        <div className="flex items-center gap-3">
+          <span
+            className={`text-xs font-medium ${!data.paid_off && aheadBy <= -ON_SCHEDULE_TOLERANCE ? 'text-rose-500' : 'text-emerald-600'}`}
+          >
+            {status}
+          </span>
+          {adjust}
+        </div>
       </div>
       <dl className="grid grid-cols-2 lg:grid-cols-4 gap-4 p-4 text-sm">
         <div>

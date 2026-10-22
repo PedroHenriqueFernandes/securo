@@ -1359,7 +1359,21 @@
     "colPayment": "Prestação",
     "colInterest": "Juros",
     "colPrincipal": "Amortização",
-    "colBalance": "Capital em dívida"
+    "colBalance": "Capital em dívida",
+    "adjustAction": "Atualizar saldo",
+    "adjustTitle": "Atualizar capital em dívida",
+    "adjustHint": "Indique o saldo que o banco apresenta. O Securo regista a diferença como uma transação neste empréstimo, para que contratos indexados ou renegociados fiquem iguais ao banco.",
+    "adjustBalance": "Capital em dívida",
+    "adjustDate": "Data do extrato",
+    "adjustDescription": "Descrição",
+    "adjustDefaultDescription": "Atualização do índice e juros",
+    "adjustCategory": "Categoria (quando a dívida aumentou)",
+    "adjustOnDate": "A diferença é calculada sobre o saldo nessa data.",
+    "adjustPreviewGrew": "A dívida aumentou {{amount}}: é registada como custo do empréstimo.",
+    "adjustPreviewFell": "A dívida diminuiu {{amount}}: o saldo é corrigido sem contar como receita.",
+    "adjustPreviewMatches": "O saldo já coincide com o do banco.",
+    "adjustRecorded": "Saldo atualizado: {{amount}} registado",
+    "adjustMatched": "O saldo já coincidia, nada foi registado"
   },
   "connections": {
     "settings": "Definições da ligação",

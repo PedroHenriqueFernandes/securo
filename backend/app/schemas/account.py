@@ -177,3 +177,21 @@ class LoanScheduleRead(BaseModel):
     projected_payoff_date: Optional[date] = None
     paid_off: bool = False
     installments: list[LoanInstallmentRead] = []
+
+
+class LoanBalanceUpdate(BaseModel):
+    """What the lender says is owed on a date, to bring the ledger in line."""
+
+    balance: Decimal = Field(ge=0)
+    date: date
+    description: str = Field(min_length=1, max_length=500)
+    # Category of the adjustment when the debt grew (interest, indexation).
+    category_id: Optional[uuid.UUID] = None
+
+
+class LoanBalanceAdjustment(BaseModel):
+    # Positive when the debt grew, negative when it fell, zero when the
+    # ledger already matched and nothing was recorded.
+    adjustment: float
+    current_debt: float
+    transaction_id: Optional[uuid.UUID] = None

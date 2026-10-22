@@ -1359,7 +1359,21 @@
     "colPayment": "Échéance",
     "colInterest": "Intérêts",
     "colPrincipal": "Capital",
-    "colBalance": "Restant dû"
+    "colBalance": "Restant dû",
+    "adjustAction": "Mettre à jour le solde",
+    "adjustTitle": "Mettre à jour le capital restant dû",
+    "adjustHint": "Saisissez le solde indiqué par le prêteur. Securo enregistre la différence comme une transaction sur ce prêt, pour que les contrats indexés ou renégociés restent alignés sur la banque.",
+    "adjustBalance": "Capital restant dû",
+    "adjustDate": "Date du relevé",
+    "adjustDescription": "Description",
+    "adjustDefaultDescription": "Indexation et intérêts",
+    "adjustCategory": "Catégorie (si la dette a augmenté)",
+    "adjustOnDate": "La différence est calculée sur le solde à cette date.",
+    "adjustPreviewGrew": "La dette a augmenté de {{amount}} : c'est enregistré comme un coût du prêt.",
+    "adjustPreviewFell": "La dette a baissé de {{amount}} : le solde est corrigé sans compter comme un revenu.",
+    "adjustPreviewMatches": "Le solde correspond déjà à celui de la banque.",
+    "adjustRecorded": "Solde mis à jour : {{amount}} enregistré",
+    "adjustMatched": "Le solde correspondait déjà, rien n'a été enregistré"
   },
   "connections": {
     "settings": "Paramètres de connexion",

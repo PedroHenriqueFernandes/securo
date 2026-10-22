@@ -1359,7 +1359,21 @@
     "colPayment": "Cuota",
     "colInterest": "Intereses",
     "colPrincipal": "Amortización",
-    "colBalance": "Saldo pendiente"
+    "colBalance": "Saldo pendiente",
+    "adjustAction": "Actualizar saldo",
+    "adjustTitle": "Actualizar saldo pendiente",
+    "adjustHint": "Indica el saldo que muestra el banco. Securo registra la diferencia como una transacción en este préstamo, para que los contratos indexados o renegociados coincidan con el banco.",
+    "adjustBalance": "Saldo pendiente",
+    "adjustDate": "Fecha del extracto",
+    "adjustDescription": "Descripción",
+    "adjustDefaultDescription": "Indexación e intereses",
+    "adjustCategory": "Categoría (cuando la deuda aumentó)",
+    "adjustOnDate": "La diferencia se calcula sobre el saldo en esa fecha.",
+    "adjustPreviewGrew": "La deuda aumentó {{amount}}: se registra como coste del préstamo.",
+    "adjustPreviewFell": "La deuda bajó {{amount}}: el saldo se corrige sin contar como ingreso.",
+    "adjustPreviewMatches": "El saldo ya coincide con el del banco.",
+    "adjustRecorded": "Saldo actualizado: {{amount}} registrado",
+    "adjustMatched": "El saldo ya coincidía, no se registró nada"
   },
   "connections": {
     "settings": "Configuración de la conexión",

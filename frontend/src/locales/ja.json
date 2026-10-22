@@ -1355,7 +1355,21 @@
     "colPayment": "返済額",
     "colInterest": "利息",
     "colPrincipal": "元金",
-    "colBalance": "残高"
+    "colBalance": "残高",
+    "adjustAction": "残高を更新",
+    "adjustTitle": "残債を更新",
+    "adjustHint": "貸し手が示す残高を入力してください。Securo は差額をこのローンの取引として 1 件記録し、指数連動や条件変更のある契約も金融機関と一致させます。",
+    "adjustBalance": "残債",
+    "adjustDate": "明細の日付",
+    "adjustDescription": "説明",
+    "adjustDefaultDescription": "指数連動と利息",
+    "adjustCategory": "カテゴリ (債務が増えた場合)",
+    "adjustOnDate": "差額はその日付の残高に対して計算されます。",
+    "adjustPreviewGrew": "債務が {{amount}} 増えました: ローンの費用として記録されます。",
+    "adjustPreviewFell": "債務が {{amount}} 減りました: 収入には含めずに残高を修正します。",
+    "adjustPreviewMatches": "残高はすでに金融機関と一致しています。",
+    "adjustRecorded": "残高を更新しました: {{amount}} を記録",
+    "adjustMatched": "残高はすでに一致していたため、何も記録されませんでした"
   },
   "connections": {
     "settings": "接続設定",

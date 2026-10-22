@@ -1355,7 +1355,21 @@
     "colPayment": "Részlet",
     "colInterest": "Kamat",
     "colPrincipal": "Tőke",
-    "colBalance": "Fennálló tartozás"
+    "colBalance": "Fennálló tartozás",
+    "adjustAction": "Egyenleg frissítése",
+    "adjustTitle": "Fennálló tartozás frissítése",
+    "adjustHint": "Add meg a hitelező által közölt egyenleget. A Securo a különbséget egy tranzakcióként rögzíti ezen a hitelen, így az indexált vagy újratárgyalt szerződések egyeznek a bankkal.",
+    "adjustBalance": "Fennálló tartozás",
+    "adjustDate": "Kivonat dátuma",
+    "adjustDescription": "Leírás",
+    "adjustDefaultDescription": "Indexálás és kamat",
+    "adjustCategory": "Kategória (ha a tartozás nőtt)",
+    "adjustOnDate": "A különbség az adott napi egyenleghez képest számolódik.",
+    "adjustPreviewGrew": "A tartozás {{amount}} összeggel nőtt: a hitel költségeként rögzül.",
+    "adjustPreviewFell": "A tartozás {{amount}} összeggel csökkent: az egyenleg bevételként való számolás nélkül javul.",
+    "adjustPreviewMatches": "Az egyenleg már egyezik a bankéval.",
+    "adjustRecorded": "Egyenleg frissítve: {{amount}} rögzítve",
+    "adjustMatched": "Az egyenleg már egyezett, semmi sem lett rögzítve"
   },
   "connections": {
     "settings": "Kapcsolat beállításai",

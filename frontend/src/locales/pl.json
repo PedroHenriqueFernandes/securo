@@ -1408,7 +1408,21 @@
     "colPayment": "Rata",
     "colInterest": "Odsetki",
     "colPrincipal": "Kapitał",
-    "colBalance": "Pozostało"
+    "colBalance": "Pozostało",
+    "adjustAction": "Zaktualizuj saldo",
+    "adjustTitle": "Zaktualizuj pozostały dług",
+    "adjustHint": "Wpisz saldo podane przez kredytodawcę. Securo zapisze różnicę jako jedną transakcję na tej pożyczce, aby umowy indeksowane lub renegocjowane zgadzały się z bankiem.",
+    "adjustBalance": "Pozostały dług",
+    "adjustDate": "Data wyciągu",
+    "adjustDescription": "Opis",
+    "adjustDefaultDescription": "Indeksacja i odsetki",
+    "adjustCategory": "Kategoria (gdy dług wzrósł)",
+    "adjustOnDate": "Różnica jest liczona względem salda z tego dnia.",
+    "adjustPreviewGrew": "Dług wzrósł o {{amount}}: zostanie zapisany jako koszt pożyczki.",
+    "adjustPreviewFell": "Dług spadł o {{amount}}: saldo zostanie poprawione bez liczenia jako przychód.",
+    "adjustPreviewMatches": "Saldo już zgadza się z bankiem.",
+    "adjustRecorded": "Saldo zaktualizowane: zapisano {{amount}}",
+    "adjustMatched": "Saldo już się zgadzało, nic nie zapisano"
   },
   "connections": {
     "settings": "Ustawienia połączenia",

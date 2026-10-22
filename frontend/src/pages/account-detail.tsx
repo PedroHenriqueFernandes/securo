@@ -1406,7 +1406,7 @@ export default function AccountDetailPage() {
       })()}
 
       {account.type === 'loan' && (
-        <LoanScheduleCard accountId={account.id} locale={locale} dateLocale={dateLocale} mask={mask} />
+        <LoanScheduleCard accountId={account.id} locale={locale} dateLocale={dateLocale} mask={mask} canWrite={canWrite} />
       )}
 
       {/* Balance / Cycle spending chart */}

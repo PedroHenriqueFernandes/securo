@@ -1439,7 +1439,21 @@
     "colPayment": "Splátka",
     "colInterest": "Úrok",
     "colPrincipal": "Jistina",
-    "colBalance": "Zůstatek"
+    "colBalance": "Zůstatek",
+    "adjustAction": "Aktualizovat zůstatek",
+    "adjustTitle": "Aktualizovat zbývající dluh",
+    "adjustHint": "Zadejte zůstatek, který uvádí věřitel. Securo zapíše rozdíl jako jednu transakci na tomto úvěru, aby indexované nebo přejednané smlouvy odpovídaly bance.",
+    "adjustBalance": "Zbývající dluh",
+    "adjustDate": "Datum výpisu",
+    "adjustDescription": "Popis",
+    "adjustDefaultDescription": "Indexace a úroky",
+    "adjustCategory": "Kategorie (když dluh vzrostl)",
+    "adjustOnDate": "Rozdíl se počítá vůči zůstatku k tomuto datu.",
+    "adjustPreviewGrew": "Dluh vzrostl o {{amount}}: zapíše se jako náklad úvěru.",
+    "adjustPreviewFell": "Dluh klesl o {{amount}}: zůstatek se opraví, aniž by se počítal jako příjem.",
+    "adjustPreviewMatches": "Zůstatek už odpovídá bance.",
+    "adjustRecorded": "Zůstatek aktualizován: zapsáno {{amount}}",
+    "adjustMatched": "Zůstatek už odpovídal, nic nebylo zapsáno"
   },
   "connections": {
     "settings": "Nastavení propojení",

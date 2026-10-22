@@ -1355,7 +1355,21 @@
     "colPayment": "किस्त",
     "colInterest": "ब्याज",
     "colPrincipal": "मूलधन",
-    "colBalance": "बकाया"
+    "colBalance": "बकाया",
+    "adjustAction": "बैलेंस अपडेट करें",
+    "adjustTitle": "बकाया राशि अपडेट करें",
+    "adjustHint": "ऋणदाता जो बकाया बताता है वह दर्ज करें। Securo अंतर को इस ऋण पर एक लेनदेन के रूप में दर्ज करता है, ताकि सूचकांक से जुड़े या फिर से तय किए गए अनुबंध बैंक से मेल खाएं।",
+    "adjustBalance": "बकाया राशि",
+    "adjustDate": "स्टेटमेंट की तारीख",
+    "adjustDescription": "विवरण",
+    "adjustDefaultDescription": "सूचकांक समायोजन और ब्याज",
+    "adjustCategory": "श्रेणी (जब कर्ज बढ़ा हो)",
+    "adjustOnDate": "अंतर उस तारीख के बैलेंस के आधार पर निकाला जाता है।",
+    "adjustPreviewGrew": "कर्ज {{amount}} बढ़ा: इसे ऋण की लागत के रूप में दर्ज किया जाता है।",
+    "adjustPreviewFell": "कर्ज {{amount}} घटा: बैलेंस को आय में गिने बिना ठीक किया जाता है।",
+    "adjustPreviewMatches": "बैलेंस पहले से बैंक से मेल खाता है।",
+    "adjustRecorded": "बैलेंस अपडेट हुआ: {{amount}} दर्ज",
+    "adjustMatched": "बैलेंस पहले से मेल खाता था, कुछ दर्ज नहीं हुआ"
   },
   "connections": {
     "settings": "कनेक्शन सेटिंग्स",

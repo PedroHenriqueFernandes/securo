@@ -1359,7 +1359,21 @@
     "colPayment": "Parcela",
     "colInterest": "Juros",
     "colPrincipal": "Amortização",
-    "colBalance": "Saldo devedor"
+    "colBalance": "Saldo devedor",
+    "adjustAction": "Atualizar saldo",
+    "adjustTitle": "Atualizar saldo devedor",
+    "adjustHint": "Informe o saldo que o banco mostra. O Securo lança a diferença como uma transação neste empréstimo, para que contratos com índice ou renegociados fiquem iguais ao banco.",
+    "adjustBalance": "Saldo devedor",
+    "adjustDate": "Data do extrato",
+    "adjustDescription": "Descrição",
+    "adjustDefaultDescription": "Correção monetária e juros",
+    "adjustCategory": "Categoria (quando a dívida aumentou)",
+    "adjustOnDate": "A diferença é calculada sobre o saldo nessa data.",
+    "adjustPreviewGrew": "A dívida aumentou {{amount}}: entra como custo do empréstimo.",
+    "adjustPreviewFell": "A dívida caiu {{amount}}: o saldo é corrigido sem contar como receita.",
+    "adjustPreviewMatches": "O saldo já confere com o do banco.",
+    "adjustRecorded": "Saldo atualizado: {{amount}} lançado",
+    "adjustMatched": "O saldo já conferia, nada foi lançado"
   },
   "connections": {
     "settings": "Configurações da conexão",

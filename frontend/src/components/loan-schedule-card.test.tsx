@@ -10,6 +10,14 @@ const loanSchedule = vi.fn()
 
 vi.mock('@/lib/api', () => ({
   accounts: { loanSchedule: (id: string) => loanSchedule(id) },
+  categories: { list: async () => [] },
+  categoryGroups: { list: async () => [] },
+}))
+
+// The date picker reads the display locale from the signed-in user.
+vi.mock('@/hooks/use-display-locale', () => ({
+  useDisplayLocale: () => 'en-US',
+  useDateLocale: () => 'en-US',
 }))
 
 const installments = [
@@ -93,5 +101,29 @@ describe('LoanScheduleCard', () => {
 
     expect(await screen.findByText(t('loans.notConfigured'))).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: t('loans.showSchedule') })).not.toBeInTheDocument()
+  })
+
+  it('offers to update the balance only to members who can write', async () => {
+    loanSchedule.mockResolvedValue(schedule())
+
+    const { unmount } = renderWithProviders(<LoanScheduleCard {...props} />)
+    await screen.findByText(money(888.49))
+    expect(screen.queryByRole('button', { name: t('loans.adjustAction') })).not.toBeInTheDocument()
+    unmount()
+
+    renderWithProviders(<LoanScheduleCard {...props} canWrite />)
+    fireEvent.click(await screen.findByRole('button', { name: t('loans.adjustAction') }))
+
+    expect(await screen.findByRole('dialog', { name: t('loans.adjustTitle') })).toBeInTheDocument()
+  })
+
+  it('lets a loan without terms be updated from the statement', async () => {
+    loanSchedule.mockResolvedValue(
+      schedule({ configured: false, missing: ['loan_interest_rate'], next_payment: null, installments: [] }),
+    )
+
+    renderWithProviders(<LoanScheduleCard {...props} canWrite />)
+
+    expect(await screen.findByRole('button', { name: t('loans.adjustAction') })).toBeInTheDocument()
   })
 })

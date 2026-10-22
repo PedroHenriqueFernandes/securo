@@ -1357,7 +1357,21 @@
     "colPayment": "Termijn",
     "colInterest": "Rente",
     "colPrincipal": "Aflossing",
-    "colBalance": "Restschuld"
+    "colBalance": "Restschuld",
+    "adjustAction": "Saldo bijwerken",
+    "adjustTitle": "Openstaande schuld bijwerken",
+    "adjustHint": "Vul het saldo in dat de geldverstrekker opgeeft. Securo boekt het verschil als één transactie op deze lening, zodat geïndexeerde of heronderhandelde contracten gelijk blijven aan de bank.",
+    "adjustBalance": "Openstaande schuld",
+    "adjustDate": "Datum afschrift",
+    "adjustDescription": "Omschrijving",
+    "adjustDefaultDescription": "Indexatie en rente",
+    "adjustCategory": "Categorie (als de schuld is gestegen)",
+    "adjustOnDate": "Het verschil wordt berekend op het saldo op die datum.",
+    "adjustPreviewGrew": "De schuld is {{amount}} gestegen: dit wordt geboekt als kosten van de lening.",
+    "adjustPreviewFell": "De schuld is {{amount}} gedaald: het saldo wordt gecorrigeerd zonder als inkomen te tellen.",
+    "adjustPreviewMatches": "Het saldo komt al overeen met de bank.",
+    "adjustRecorded": "Saldo bijgewerkt: {{amount}} geboekt",
+    "adjustMatched": "Het saldo klopte al, er is niets geboekt"
   },
   "connections": {
     "settings": "Verbindingsinstellingen",

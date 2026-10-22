@@ -1359,7 +1359,21 @@
     "colPayment": "Rata",
     "colInterest": "Interessi",
     "colPrincipal": "Capitale",
-    "colBalance": "Debito residuo"
+    "colBalance": "Debito residuo",
+    "adjustAction": "Aggiorna saldo",
+    "adjustTitle": "Aggiorna il debito residuo",
+    "adjustHint": "Inserisci il saldo indicato dal finanziatore. Securo registra la differenza come una transazione su questo prestito, così i contratti indicizzati o rinegoziati restano allineati alla banca.",
+    "adjustBalance": "Debito residuo",
+    "adjustDate": "Data dell'estratto",
+    "adjustDescription": "Descrizione",
+    "adjustDefaultDescription": "Indicizzazione e interessi",
+    "adjustCategory": "Categoria (se il debito è aumentato)",
+    "adjustOnDate": "La differenza è calcolata sul saldo a quella data.",
+    "adjustPreviewGrew": "Il debito è aumentato di {{amount}}: viene registrato come costo del prestito.",
+    "adjustPreviewFell": "Il debito è sceso di {{amount}}: il saldo viene corretto senza contare come entrata.",
+    "adjustPreviewMatches": "Il saldo coincide già con quello della banca.",
+    "adjustRecorded": "Saldo aggiornato: {{amount}} registrato",
+    "adjustMatched": "Il saldo coincideva già, non è stato registrato nulla"
   },
   "connections": {
     "settings": "Impostazioni connessione",

@@ -1423,7 +1423,21 @@
     "colPayment": "Splátka",
     "colInterest": "Úrok",
     "colPrincipal": "Istina",
-    "colBalance": "Zostatok"
+    "colBalance": "Zostatok",
+    "adjustAction": "Aktualizovať zostatok",
+    "adjustTitle": "Aktualizovať zostávajúci dlh",
+    "adjustHint": "Zadajte zostatok, ktorý uvádza veriteľ. Securo zapíše rozdiel ako jednu transakciu na tomto úvere, aby indexované alebo prerokované zmluvy zodpovedali banke.",
+    "adjustBalance": "Zostávajúci dlh",
+    "adjustDate": "Dátum výpisu",
+    "adjustDescription": "Popis",
+    "adjustDefaultDescription": "Indexácia a úroky",
+    "adjustCategory": "Kategória (keď dlh vzrástol)",
+    "adjustOnDate": "Rozdiel sa počíta voči zostatku k tomuto dátumu.",
+    "adjustPreviewGrew": "Dlh vzrástol o {{amount}}: zapíše sa ako náklad úveru.",
+    "adjustPreviewFell": "Dlh klesol o {{amount}}: zostatok sa opraví bez toho, aby sa počítal ako príjem.",
+    "adjustPreviewMatches": "Zostatok už zodpovedá banke.",
+    "adjustRecorded": "Zostatok aktualizovaný: zapísané {{amount}}",
+    "adjustMatched": "Zostatok už zodpovedal, nič nebolo zapísané"
   },
   "connections": {
     "settings": "Nastavenia prepojenia",
