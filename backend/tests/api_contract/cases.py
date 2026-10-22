@@ -103,6 +103,9 @@ PARAM_WORLD_KEYS_BY_OPERATION: dict[tuple[str, str], dict[str, str]] = {
         ("GET", "statement"),
     )
 }
+PARAM_WORLD_KEYS_BY_OPERATION[("GET", "/api/accounts/{account_id}/loan-schedule")] = {
+    "account_id": "loan_account_id"
+}
 
 @dataclass(frozen=True)
 class KnownBug:

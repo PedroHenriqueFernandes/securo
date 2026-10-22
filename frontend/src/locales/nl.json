@@ -1192,6 +1192,31 @@
     "noSecuredProperty": "Geen gekoppelde bezitting",
     "loanRetypeHint": "Alleen een rekening zonder transacties kan naar of van Lening wisselen.",
     "loanRetypeBlocked": "Deze rekening heeft transacties en kan daarom niet naar of van Lening wisselen. Maak in plaats daarvan een nieuwe leningrekening aan.",
+    "loanTerms": "Contractgegevens (optioneel)",
+    "loanKind": "Soort lening",
+    "loanKindNone": "Niet ingevuld",
+    "loanKinds": {
+      "mortgage": "Hypotheek",
+      "auto": "Autofinanciering",
+      "personal": "Persoonlijke lening",
+      "student": "Studielening",
+      "other": "Overig"
+    },
+    "loanOriginalAmount": "Geleend bedrag",
+    "loanInterestRate": "Rente (%)",
+    "loanRatePeriod": "Renteperiode",
+    "loanRatePeriods": {
+      "monthly": "per maand",
+      "yearly_effective": "per jaar (effectief)",
+      "yearly_nominal": "per jaar (nominaal)"
+    },
+    "loanTermMonths": "Looptijd (maanden)",
+    "loanFirstPayment": "Eerste termijn",
+    "loanAmortization": "Aflossing",
+    "loanAmortizations": {
+      "price": "Vaste termijn (annuïtair)",
+      "sac": "Vaste aflossing (lineair)"
+    },
     "balanceLoan": "Openstaande schuld",
     "creditLimit": "Kredietlimiet",
     "statementCloseDay": "Verklaring sluitingsdag",
@@ -1311,6 +1336,28 @@
       "error": "Fout",
       "expired": "Verlopen"
     }
+  },
+  "loans": {
+    "title": "Leningcontract",
+    "notConfigured": "Vul bedrag, rente, looptijd en eerste termijn in bij de rekeninginstellingen om het aflossingsschema en de einddatum te zien.",
+    "nextPayment": "Volgende termijn",
+    "nextPaymentSplit": "{{date}} · rente {{interest}} · aflossing {{principal}}",
+    "remaining": "Resterende termijnen",
+    "remainingValue": "{{remaining}} van {{total}}",
+    "totalInterest": "Totale rente",
+    "payoff": "Einde volgens contract",
+    "projectedPayoff": "Einde in het huidige tempo",
+    "ahead": "{{amount}} voor op het contract",
+    "behind": "{{amount}} achter op het contract",
+    "onSchedule": "Op schema",
+    "paidOff": "Afgelost",
+    "showSchedule": "Aflossingsschema tonen",
+    "hideSchedule": "Schema verbergen",
+    "colDate": "Datum",
+    "colPayment": "Termijn",
+    "colInterest": "Rente",
+    "colPrincipal": "Aflossing",
+    "colBalance": "Restschuld"
   },
   "connections": {
     "settings": "Verbindingsinstellingen",

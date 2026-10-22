@@ -15,6 +15,7 @@ from app.core.workspace_context import (
 from app.schemas.account import (
     AccountCreate,
     AccountRead,
+    LoanScheduleRead,
     AccountSummary,
     AccountUpdate,
     CreditCardBillRead,
@@ -135,6 +136,18 @@ async def get_account_bills(
     if bills is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
     return bills
+
+
+@router.get("/{account_id}/loan-schedule", response_model=LoanScheduleRead)
+async def get_loan_schedule(
+    account_id: uuid.UUID,
+    ctx: WorkspaceContext = Depends(current_workspace),
+    session: AsyncSession = Depends(get_async_session),
+):
+    schedule = await account_service.get_loan_schedule(session, account_id, ctx.workspace.id)
+    if schedule is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan account not found")
+    return schedule
 
 
 @router.get("/{account_id}", response_model=AccountRead)

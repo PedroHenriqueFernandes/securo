@@ -1208,6 +1208,31 @@
     "noSecuredProperty": "Немає пов’язаного майна",
     "loanRetypeHint": "Лише рахунок без транзакцій можна перевести в тип «Кредит» або з нього.",
     "loanRetypeBlocked": "Цей рахунок має транзакції, тому його не можна перевести в тип «Кредит» або з нього. Створіть новий кредитний рахунок.",
+    "loanTerms": "Умови договору (необов’язково)",
+    "loanKind": "Тип кредиту",
+    "loanKindNone": "Не вказано",
+    "loanKinds": {
+      "mortgage": "Іпотека",
+      "auto": "Автокредит",
+      "personal": "Споживчий кредит",
+      "student": "Освітній кредит",
+      "other": "Інше"
+    },
+    "loanOriginalAmount": "Сума кредиту",
+    "loanInterestRate": "Процентна ставка (%)",
+    "loanRatePeriod": "Період ставки",
+    "loanRatePeriods": {
+      "monthly": "на місяць",
+      "yearly_effective": "на рік (ефективна)",
+      "yearly_nominal": "на рік (номінальна)"
+    },
+    "loanTermMonths": "Строк (місяці)",
+    "loanFirstPayment": "Перший платіж",
+    "loanAmortization": "Погашення",
+    "loanAmortizations": {
+      "price": "Ануїтетний платіж",
+      "sac": "Диференційований платіж"
+    },
     "balanceLoan": "Залишок боргу",
     "creditLimit": "Кредитний ліміт",
     "statementCloseDay": "Дата закриття виписки",
@@ -1326,6 +1351,28 @@
       "error": "Помилка",
       "expired": "Термін дії минув"
     }
+  },
+  "loans": {
+    "title": "Кредитний договір",
+    "notConfigured": "Вкажіть суму, ставку, строк і перший платіж у налаштуваннях рахунку, щоб побачити графік платежів і дату погашення.",
+    "nextPayment": "Наступний платіж",
+    "nextPaymentSplit": "{{date}} · відсотки {{interest}} · основний борг {{principal}}",
+    "remaining": "Залишилось платежів",
+    "remainingValue": "{{remaining}} з {{total}}",
+    "totalInterest": "Усього відсотків",
+    "payoff": "Погашення за договором",
+    "projectedPayoff": "Погашення в поточному темпі",
+    "ahead": "{{amount}} з випередженням договору",
+    "behind": "{{amount}} з відставанням від договору",
+    "onSchedule": "За графіком",
+    "paidOff": "Погашено",
+    "showSchedule": "Показати графік платежів",
+    "hideSchedule": "Сховати графік",
+    "colDate": "Дата",
+    "colPayment": "Платіж",
+    "colInterest": "Відсотки",
+    "colPrincipal": "Основний борг",
+    "colBalance": "Залишок боргу"
   },
   "connections": {
     "settings": "Налаштування підключення",

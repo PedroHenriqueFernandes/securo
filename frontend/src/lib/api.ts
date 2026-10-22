@@ -17,6 +17,7 @@ import type {
   AccountSummary,
   Collection,
   CreditCardBill,
+  LoanSchedule,
   DescriptionSuggestion,
   Transaction,
   Payee,
@@ -486,6 +487,10 @@ export const accounts = {
   },
   balanceHistory: async (id: string, from?: string, to?: string): Promise<{ date: string; balance: number; balance_primary?: number; fx_fallback?: boolean }[]> => {
     const { data } = await api.get(`/accounts/${id}/balance-history`, { params: { from, to } })
+    return data
+  },
+  loanSchedule: async (id: string): Promise<LoanSchedule> => {
+    const { data } = await api.get(`/accounts/${id}/loan-schedule`)
     return data
   },
   bills: async (id: string, limit = 24): Promise<CreditCardBill[]> => {

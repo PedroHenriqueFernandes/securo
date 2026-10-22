@@ -1,9 +1,13 @@
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
+from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+
+LoanKind = Literal["mortgage", "auto", "personal", "student", "other"]
+LoanRatePeriod = Literal["monthly", "yearly_effective", "yearly_nominal"]
+LoanAmortization = Literal["price", "sac"]
 
 
 class AccountBase(BaseModel):
@@ -28,6 +32,14 @@ class AccountCreate(BaseModel):
     minimum_payment: Optional[Decimal] = None
     card_brand: Optional[str] = None
     card_level: Optional[str] = None
+    # Loan accounts only: contract terms, all optional (see loan_schedule.py).
+    loan_kind: Optional[LoanKind] = None
+    loan_original_amount: Optional[Decimal] = Field(default=None, gt=0)
+    loan_interest_rate: Optional[Decimal] = Field(default=None, ge=0, le=100)
+    loan_rate_period: Optional[LoanRatePeriod] = None
+    loan_term_months: Optional[int] = Field(default=None, ge=1, le=600)
+    loan_first_payment_date: Optional[date] = None
+    loan_amortization: Optional[LoanAmortization] = None
 
 
 class AccountUpdate(BaseModel):
@@ -43,6 +55,14 @@ class AccountUpdate(BaseModel):
     minimum_payment: Optional[Decimal] = None
     card_brand: Optional[str] = None
     card_level: Optional[str] = None
+    # Loan accounts only: contract terms, all optional (see loan_schedule.py).
+    loan_kind: Optional[LoanKind] = None
+    loan_original_amount: Optional[Decimal] = Field(default=None, gt=0)
+    loan_interest_rate: Optional[Decimal] = Field(default=None, ge=0, le=100)
+    loan_rate_period: Optional[LoanRatePeriod] = None
+    loan_term_months: Optional[int] = Field(default=None, ge=1, le=600)
+    loan_first_payment_date: Optional[date] = None
+    loan_amortization: Optional[LoanAmortization] = None
 
 
 class AccountRead(AccountBase):
@@ -74,6 +94,13 @@ class AccountRead(AccountBase):
     minimum_payment: Optional[float] = None
     card_brand: Optional[str] = None
     card_level: Optional[str] = None
+    loan_kind: Optional[str] = None
+    loan_original_amount: Optional[float] = None
+    loan_interest_rate: Optional[float] = None
+    loan_rate_period: Optional[str] = None
+    loan_term_months: Optional[int] = None
+    loan_first_payment_date: Optional[date] = None
+    loan_amortization: Optional[str] = None
     shared_balance_group: Optional[str] = None
     is_closed: bool = False
     closed_at: Optional[datetime] = None
@@ -116,3 +143,37 @@ class AccountSummary(BaseModel):
     # True when no real FX rate is available, so the *_primary fields are
     # left unset rather than a 1:1 guess.
     fx_fallback: bool = False
+
+
+class LoanInstallmentRead(BaseModel):
+    number: int
+    due_date: date
+    payment: float
+    interest: float
+    principal: float
+    balance: float
+
+
+class LoanScheduleRead(BaseModel):
+    """A loan's payment schedule, computed from its contract terms on read."""
+
+    account_id: uuid.UUID
+    currency: str
+    # What the account's own transactions say is still owed (never negative).
+    current_debt: float
+    # False until every term the schedule needs is set; `missing` lists them.
+    configured: bool
+    missing: list[str] = []
+    monthly_payment: Optional[float] = None
+    payments_due: Optional[int] = None
+    remaining_payments: Optional[int] = None
+    next_payment: Optional[LoanInstallmentRead] = None
+    scheduled_balance: Optional[float] = None
+    # Positive when less is owed than the contract expects by now.
+    ahead_by: Optional[float] = None
+    total_interest: Optional[float] = None
+    total_paid: Optional[float] = None
+    payoff_date: Optional[date] = None
+    projected_payoff_date: Optional[date] = None
+    paid_off: bool = False
+    installments: list[LoanInstallmentRead] = []

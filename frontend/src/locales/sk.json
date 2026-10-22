@@ -1247,6 +1247,31 @@
     "noSecuredProperty": "Žiadny prepojený majetok",
     "loanRetypeHint": "Iba účet bez transakcií môže prejsť na typ Úver alebo z neho.",
     "loanRetypeBlocked": "Tento účet má transakcie, preto nemôže prejsť na typ Úver ani z neho. Vytvorte namiesto toho nový úverový účet.",
+    "loanTerms": "Zmluvné podmienky (nepovinné)",
+    "loanKind": "Typ úveru",
+    "loanKindNone": "Neuvedené",
+    "loanKinds": {
+      "mortgage": "Hypotéka",
+      "auto": "Úver na vozidlo",
+      "personal": "Spotrebný úver",
+      "student": "Študentský úver",
+      "other": "Iný"
+    },
+    "loanOriginalAmount": "Výška úveru",
+    "loanInterestRate": "Úroková sadzba (%)",
+    "loanRatePeriod": "Obdobie sadzby",
+    "loanRatePeriods": {
+      "monthly": "mesačne",
+      "yearly_effective": "ročne (efektívna)",
+      "yearly_nominal": "ročne (nominálna)"
+    },
+    "loanTermMonths": "Doba splácania (mesiace)",
+    "loanFirstPayment": "Prvá splátka",
+    "loanAmortization": "Splácanie",
+    "loanAmortizations": {
+      "price": "Rovnaká splátka (anuita)",
+      "sac": "Rovnaká istina"
+    },
     "balanceLoan": "Zostatok dlhu",
     "creditLimit": "Kreditný limit",
     "statementCloseDay": "Deň uzávierky výpisu",
@@ -1377,6 +1402,28 @@
       "error": "Chyba",
       "expired": "Vypršané"
     }
+  },
+  "loans": {
+    "title": "Úverová zmluva",
+    "notConfigured": "Zadajte sumu, sadzbu, dobu splácania a prvú splátku v nastaveniach účtu, aby ste videli splátkový kalendár a dátum splatenia.",
+    "nextPayment": "Ďalšia splátka",
+    "nextPaymentSplit": "{{date}} · úrok {{interest}} · istina {{principal}}",
+    "remaining": "Zostávajúce splátky",
+    "remainingValue": "{{remaining}} z {{total}}",
+    "totalInterest": "Úroky spolu",
+    "payoff": "Splatenie podľa zmluvy",
+    "projectedPayoff": "Splatenie súčasným tempom",
+    "ahead": "{{amount}} vpred oproti zmluve",
+    "behind": "{{amount}} pozadu oproti zmluve",
+    "onSchedule": "Podľa plánu",
+    "paidOff": "Splatené",
+    "showSchedule": "Zobraziť splátkový kalendár",
+    "hideSchedule": "Skryť kalendár",
+    "colDate": "Dátum",
+    "colPayment": "Splátka",
+    "colInterest": "Úrok",
+    "colPrincipal": "Istina",
+    "colBalance": "Zostatok"
   },
   "connections": {
     "settings": "Nastavenia prepojenia",

@@ -1192,6 +1192,31 @@
     "noSecuredProperty": "Kein verknüpfter Vermögenswert",
     "loanRetypeHint": "Nur ein Konto ohne Buchungen kann zu Kredit oder von Kredit wechseln.",
     "loanRetypeBlocked": "Dieses Konto hat Buchungen und kann daher nicht zu Kredit oder von Kredit wechseln. Lege stattdessen ein neues Kreditkonto an.",
+    "loanTerms": "Vertragsdaten (optional)",
+    "loanKind": "Kreditart",
+    "loanKindNone": "Nicht angegeben",
+    "loanKinds": {
+      "mortgage": "Immobilienfinanzierung",
+      "auto": "Fahrzeugfinanzierung",
+      "personal": "Privatkredit",
+      "student": "Studienkredit",
+      "other": "Sonstiges"
+    },
+    "loanOriginalAmount": "Kreditbetrag",
+    "loanInterestRate": "Zinssatz (%)",
+    "loanRatePeriod": "Zinsperiode",
+    "loanRatePeriods": {
+      "monthly": "pro Monat",
+      "yearly_effective": "pro Jahr (effektiv)",
+      "yearly_nominal": "pro Jahr (nominal)"
+    },
+    "loanTermMonths": "Laufzeit (Monate)",
+    "loanFirstPayment": "Erste Rate",
+    "loanAmortization": "Tilgung",
+    "loanAmortizations": {
+      "price": "Gleiche Rate (Annuität)",
+      "sac": "Gleiche Tilgung"
+    },
     "balanceLoan": "Offene Schuld",
     "creditLimit": "Kreditlimit",
     "statementCloseDay": "Abrechnungsstichtag",
@@ -1310,6 +1335,28 @@
       "error": "Fehler",
       "expired": "Abgelaufen"
     }
+  },
+  "loans": {
+    "title": "Kreditvertrag",
+    "notConfigured": "Gib Betrag, Zinssatz, Laufzeit und erste Rate in den Kontoeinstellungen an, um Tilgungsplan und Enddatum zu sehen.",
+    "nextPayment": "Nächste Rate",
+    "nextPaymentSplit": "{{date}} · Zinsen {{interest}} · Tilgung {{principal}}",
+    "remaining": "Verbleibende Raten",
+    "remainingValue": "{{remaining}} von {{total}}",
+    "totalInterest": "Zinsen gesamt",
+    "payoff": "Ende laut Vertrag",
+    "projectedPayoff": "Ende im aktuellen Tempo",
+    "ahead": "{{amount}} vor dem Vertrag",
+    "behind": "{{amount}} hinter dem Vertrag",
+    "onSchedule": "Im Plan",
+    "paidOff": "Abbezahlt",
+    "showSchedule": "Tilgungsplan anzeigen",
+    "hideSchedule": "Tilgungsplan ausblenden",
+    "colDate": "Datum",
+    "colPayment": "Rate",
+    "colInterest": "Zinsen",
+    "colPrincipal": "Tilgung",
+    "colBalance": "Restschuld"
   },
   "connections": {
     "settings": "Verbindungseinstellungen",

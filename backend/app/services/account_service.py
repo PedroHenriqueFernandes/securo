@@ -22,8 +22,20 @@ from app.services._query_filters import (
     is_inside_provider_snapshot,
     is_not_future,
 )
+from app.services import loan_schedule
 from app.services.credit_card_service import apply_effective_date, compute_available_credit, get_cycle_dates
 from app.models.category import Category
+
+# Loan accounts only: contract terms the payment schedule is computed from.
+LOAN_TERM_FIELDS = (
+    "loan_kind",
+    "loan_original_amount",
+    "loan_interest_rate",
+    "loan_rate_period",
+    "loan_term_months",
+    "loan_first_payment_date",
+    "loan_amortization",
+)
 
 
 def get_account_name(account: Account) -> str:
@@ -255,6 +267,13 @@ def serialize_account(
         "minimum_payment": float(acc.minimum_payment) if acc.minimum_payment is not None else None,
         "card_brand": acc.card_brand,
         "card_level": acc.card_level,
+        "loan_kind": acc.loan_kind,
+        "loan_original_amount": float(acc.loan_original_amount) if acc.loan_original_amount is not None else None,
+        "loan_interest_rate": float(acc.loan_interest_rate) if acc.loan_interest_rate is not None else None,
+        "loan_rate_period": acc.loan_rate_period,
+        "loan_term_months": acc.loan_term_months,
+        "loan_first_payment_date": acc.loan_first_payment_date,
+        "loan_amortization": acc.loan_amortization,
         "shared_balance_group": acc.shared_balance_group,
         "institution_name": institution_name,
         "institution_logo_url": institution_logo_url,
@@ -345,6 +364,7 @@ async def create_account(
         minimum_payment=data.minimum_payment if is_cc else None,
         card_brand=data.card_brand if is_cc else None,
         card_level=data.card_level if is_cc else None,
+        **{field: getattr(data, field) if data.type == "loan" else None for field in LOAN_TERM_FIELDS},
     )
     session.add(account)
     await session.flush()  # get account.id without committing
@@ -487,6 +507,8 @@ async def update_account(
         account.card_level = None
     if account.type != "loan":
         account.secured_asset_id = None
+        for field in LOAN_TERM_FIELDS:
+            setattr(account, field, None)
 
     opening_balance_type_changed = old_type != account.type and "loan" in {old_type, account.type}
     # When balance changes, sync the opening_balance transaction
@@ -1217,3 +1239,80 @@ async def get_account_balance_history(
             point["balance"] = round(point["balance"] * sign, 2)
 
     return series
+
+
+async def get_loan_schedule(
+    session: AsyncSession, account_id: uuid.UUID, workspace_id: uuid.UUID
+) -> Optional[dict]:
+    """The loan's contract schedule next to what its ledger says is owed.
+
+    None when the account does not exist in this workspace or is not a loan.
+    """
+    account = await get_account_with_balances(session, account_id, workspace_id)
+    if not account or account["type"] != "loan":
+        return None
+    current_debt = max(Decimal("0"), -Decimal(str(account["current_balance"])))
+    payload: dict = {
+        "account_id": account["id"],
+        "currency": account["currency"],
+        "current_debt": float(current_debt),
+        "configured": False,
+    }
+    required = (
+        "loan_original_amount",
+        "loan_interest_rate",
+        "loan_rate_period",
+        "loan_term_months",
+        "loan_first_payment_date",
+        "loan_amortization",
+    )
+    missing = [field for field in required if account.get(field) is None]
+    if missing:
+        payload["missing"] = missing
+        return payload
+
+    method = account["loan_amortization"]
+    schedule = loan_schedule.build_schedule(
+        principal=Decimal(str(account["loan_original_amount"])),
+        rate_percent=Decimal(str(account["loan_interest_rate"])),
+        rate_period=account["loan_rate_period"],
+        term_months=account["loan_term_months"],
+        first_payment_date=account["loan_first_payment_date"],
+        method=method,
+    )
+    summary = loan_schedule.summarize(
+        schedule,
+        actual_balance=current_debt,
+        today=app_today(),
+        method=method,
+        rate=loan_schedule.monthly_rate(
+            Decimal(str(account["loan_interest_rate"])), account["loan_rate_period"]
+        ),
+    )
+
+    def installment(row: loan_schedule.Installment) -> dict:
+        return {
+            "number": row.number,
+            "due_date": row.due_date,
+            "payment": float(row.payment),
+            "interest": float(row.interest),
+            "principal": float(row.principal),
+            "balance": float(row.balance),
+        }
+
+    payload.update(
+        configured=True,
+        monthly_payment=float((summary.next_payment or schedule[0]).payment),
+        payments_due=summary.payments_due,
+        remaining_payments=summary.remaining_payments,
+        next_payment=installment(summary.next_payment) if summary.next_payment else None,
+        scheduled_balance=float(summary.scheduled_balance),
+        ahead_by=float(summary.ahead_by),
+        total_interest=float(summary.total_interest),
+        total_paid=float(summary.total_paid),
+        payoff_date=summary.payoff_date,
+        projected_payoff_date=summary.projected_payoff_date,
+        paid_off=summary.paid_off,
+        installments=[installment(row) for row in schedule],
+    )
+    return payload
