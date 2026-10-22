@@ -962,7 +962,7 @@ function AccountDialog({
                   </div>
                   <div className="space-y-1">
                     <Label>{t('accounts.loanOriginalAmount')}</Label>
-                    <Input type="number" step="0.01" min="0" value={loanTerms.amount} onChange={(e) => setLoanTerm('amount', e.target.value)} />
+                    <Input type="number" step="0.01" min="0.01" value={loanTerms.amount} onChange={(e) => setLoanTerm('amount', e.target.value)} />
                   </div>
                   <div className="space-y-1">
                     <Label>{t('accounts.loanInterestRate')}</Label>

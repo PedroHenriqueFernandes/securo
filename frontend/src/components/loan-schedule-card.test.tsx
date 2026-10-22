@@ -12,6 +12,7 @@ vi.mock('@/lib/api', () => ({
   accounts: { loanSchedule: (id: string) => loanSchedule(id) },
   categories: { list: async () => [] },
   categoryGroups: { list: async () => [] },
+  timezones: { list: async () => ({ default: 'UTC', available: [] }) },
 }))
 
 // The date picker reads the display locale from the signed-in user.

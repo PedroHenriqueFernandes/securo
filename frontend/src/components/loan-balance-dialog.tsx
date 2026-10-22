@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { format } from 'date-fns'
+import { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -10,8 +9,10 @@ import { DatePickerInput } from '@/components/ui/date-picker-input'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useEffectiveTimezone } from '@/hooks/use-timezone'
 import { accounts, categories as categoriesApi, categoryGroups as categoryGroupsApi } from '@/lib/api'
 import { extractApiError } from '@/lib/api-errors'
+import { todayInTimezone } from '@/lib/date-utils'
 import { formatCurrency } from '@/lib/format'
 import { invalidateFinancialQueries } from '@/lib/invalidate-queries'
 
@@ -37,9 +38,14 @@ export function LoanBalanceDialog({
 }) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const today = format(new Date(), 'yyyy-MM-dd')
+  // The backend checks the date against today in the workspace timezone.
+  const today = todayInTimezone(useEffectiveTimezone())
   const [balance, setBalance] = useState(String(currentDebt))
   const [date, setDate] = useState(today)
+  const dateTouched = useRef(false)
+  useEffect(() => {
+    if (!dateTouched.current) setDate(today)
+  }, [today])
   const [description, setDescription] = useState(t('loans.adjustDefaultDescription'))
   const [categoryId, setCategoryId] = useState('')
 
@@ -102,7 +108,13 @@ export function LoanBalanceDialog({
             </div>
             <div className="space-y-1">
               <Label>{t('loans.adjustDate')}</Label>
-              <DatePickerInput value={date} onChange={setDate} />
+              <DatePickerInput
+                value={date}
+                onChange={(value) => {
+                  dateTouched.current = true
+                  setDate(value)
+                }}
+              />
             </div>
           </div>
           <div className="space-y-1">

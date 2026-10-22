@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { LoanBalanceDialog } from '@/components/loan-balance-dialog'
+import { todayInTimezone } from '@/lib/date-utils'
 import { formatCurrency } from '@/lib/format'
 import { renderWithProviders, t } from '@/test/utils'
 
@@ -19,6 +20,9 @@ vi.mock('@/hooks/use-display-locale', () => ({
   useDateLocale: () => 'en-US',
 }))
 
+let workspaceTimezone: string | undefined
+vi.mock('@/hooks/use-timezone', () => ({ useEffectiveTimezone: () => workspaceTimezone }))
+
 const money = (value: number) => formatCurrency(value, 'BRL', 'en-US')
 
 function renderDialog(onClose = vi.fn()) {
@@ -33,7 +37,10 @@ function typeBalance(value: string) {
 }
 
 describe('LoanBalanceDialog', () => {
-  beforeEach(() => adjustLoanBalance.mockReset())
+  beforeEach(() => {
+    adjustLoanBalance.mockReset()
+    workspaceTimezone = undefined
+  })
 
   it('previews a higher statement as a cost of the loan', () => {
     renderDialog()
@@ -81,5 +88,19 @@ describe('LoanBalanceDialog', () => {
     typeBalance('-5')
 
     expect(screen.getByRole('button', { name: t('common.save') })).toBeDisabled()
+  })
+
+  it('dates the statement today in the workspace timezone', async () => {
+    workspaceTimezone = 'Pacific/Kiritimati'
+    adjustLoanBalance.mockResolvedValue({ adjustment: 0, current_debt: 10000, transaction_id: null })
+    const onClose = renderDialog()
+
+    fireEvent.click(screen.getByRole('button', { name: t('common.save') }))
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled())
+    expect(adjustLoanBalance).toHaveBeenCalledWith(
+      'loan',
+      expect.objectContaining({ date: todayInTimezone('Pacific/Kiritimati') }),
+    )
   })
 })
