@@ -1,10 +1,13 @@
 import uuid
+from datetime import date
 
 import pytest
 from httpx import AsyncClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.asset import Asset
+from app.models.transaction import Transaction
 from app.models.user import User
 from app.models.workspace import Workspace, WorkspaceMember
 
@@ -159,6 +162,9 @@ async def test_a_loan_can_be_linked_unlinked_and_retyped(
     assert relinked.status_code == 200
     assert retyped.status_code == 200
     assert retyped.json()["secured_asset_id"] is None
+    listed = (await client.get("/api/accounts", headers=auth_headers)).json()
+    checking = next(row for row in listed if row["id"] == loan["id"])
+    assert checking["current_balance"] == 1000
 
 
 @pytest.mark.asyncio
@@ -232,3 +238,64 @@ async def test_a_bank_connected_account_cannot_become_a_loan(
 
     assert response.status_code == 400
     assert "cannot be loans" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_retyping_the_linked_property_drops_the_link_and_keeps_the_loan_editable(
+    client: AsyncClient,
+    auth_headers,
+    session: AsyncSession,
+    test_user: User,
+    test_workspace: Workspace,
+):
+    home = await _asset(session, test_user, test_workspace, "real_estate")
+    loan = (
+        await client.post(
+            "/api/accounts",
+            headers=auth_headers,
+            json={"name": "Mortgage", "type": "loan", "balance": 1000, "secured_asset_id": str(home.id)},
+        )
+    ).json()
+
+    retyped_asset = await client.patch(
+        f"/api/assets/{home.id}", headers=auth_headers, json={"type": "other"}
+    )
+    listed = (await client.get("/api/accounts", headers=auth_headers)).json()
+    renamed = await client.patch(
+        f"/api/accounts/{loan['id']}", headers=auth_headers, json={"name": "Old mortgage"}
+    )
+
+    assert retyped_asset.status_code == 200, retyped_asset.text
+    assert next(row for row in listed if row["id"] == loan["id"])["secured_asset_id"] is None
+    assert renamed.status_code == 200, renamed.text
+
+
+@pytest.mark.asyncio
+async def test_retyping_a_loan_also_moves_the_opening_balance_date(
+    client: AsyncClient,
+    auth_headers,
+    session: AsyncSession,
+):
+    loan = (
+        await client.post(
+            "/api/accounts",
+            headers=auth_headers,
+            json={"name": "Loan", "type": "loan", "balance": 1000, "balance_date": "2026-01-10"},
+        )
+    ).json()
+
+    retyped = await client.patch(
+        f"/api/accounts/{loan['id']}",
+        headers=auth_headers,
+        json={"type": "checking", "balance_date": "2026-02-20"},
+    )
+
+    assert retyped.status_code == 200, retyped.text
+    opening = await session.scalar(
+        select(Transaction).where(
+            Transaction.account_id == uuid.UUID(loan["id"]),
+            Transaction.source == "opening_balance",
+        )
+    )
+    assert opening.type == "credit"
+    assert opening.date == date(2026, 2, 20)

@@ -714,6 +714,10 @@ function AccountDialog({
   const [paymentDueDay, setPaymentDueDay] = useState(account?.payment_due_day?.toString() ?? '')
   const [securedAssetId, setSecuredAssetId] = useState(account?.secured_asset_id ?? '')
 
+  const properties = (assetsList ?? []).filter((asset) => asset.type === 'real_estate')
+  // Send the link the select shows: a saved id that is no longer a listed
+  // property (it changed type) would otherwise be resent and rejected.
+  const securedAssetIsListed = !!securedAssetId && (!assetsList || properties.some((asset) => asset.id === securedAssetId))
   const [formSource, setFormSource] = useState<{ account: typeof account } | null>(null)
   if (!formSource || formSource.account !== account) {
     setFormSource({ account })
@@ -750,7 +754,7 @@ function AccountDialog({
             onSave({
               ...(!isConnected && { name, balance: parseFloat(balance), balance_date: balanceDate, currency }),
               type,
-              ...(type === 'loan' && { secured_asset_id: securedAssetId || null }),
+              ...(type === 'loan' && { secured_asset_id: securedAssetIsListed ? securedAssetId : null }),
               display_name: displayName.trim() || null,
               ...(isCC && {
                 credit_limit: creditLimit !== '' ? parseFloat(creditLimit) : null,
@@ -862,7 +866,7 @@ function AccountDialog({
                 onChange={(e) => setSecuredAssetId(e.target.value)}
               >
                 <option value="">{t('accounts.noSecuredProperty')}</option>
-                {(assetsList ?? []).filter((asset) => asset.type === 'real_estate').map((asset) => (
+                {properties.map((asset) => (
                   <option key={asset.id} value={asset.id}>{asset.name}</option>
                 ))}
               </select>

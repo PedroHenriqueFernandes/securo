@@ -510,17 +510,7 @@ async def update_account(
                 session.add(opening_tx)
         elif opening_tx:
             await session.delete(opening_tx)
-    elif opening_balance_type_changed:
-        existing_opening = await session.execute(
-            select(Transaction).where(
-                Transaction.account_id == account_id,
-                Transaction.source == "opening_balance",
-            )
-        )
-        opening_tx = existing_opening.scalar_one_or_none()
-        if opening_tx and account.balance != Decimal("0.00"):
-            _, opening_tx.type = _opening_balance_values(account.type, account.balance)
-    elif balance_date:
+    elif opening_balance_type_changed or balance_date:
         existing_opening = await session.execute(
             select(Transaction).where(
                 Transaction.account_id == account_id,
@@ -529,7 +519,10 @@ async def update_account(
         )
         opening_tx = existing_opening.scalar_one_or_none()
         if opening_tx:
-            opening_tx.date = balance_date
+            if opening_balance_type_changed and account.balance != Decimal("0.00"):
+                _, opening_tx.type = _opening_balance_values(account.type, account.balance)
+            if balance_date:
+                opening_tx.date = balance_date
             apply_effective_date(opening_tx, account)
 
     if cycle_fields_changed:
