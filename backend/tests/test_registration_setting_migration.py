@@ -23,6 +23,15 @@ def _run(direction: str, saved: str | None) -> str | None:
     """Run the migration over an app_settings table holding `saved`, and
     return what registration_enabled holds afterwards."""
     engine = sa.create_engine("sqlite://")
+    try:
+        return _run_on(engine, direction, saved)
+    finally:
+        # CI runs with -W error: a connection left to the garbage collector
+        # raises ResourceWarning in whichever test happens to be running.
+        engine.dispose()
+
+
+def _run_on(engine: sa.Engine, direction: str, saved: str | None) -> str | None:
     with engine.begin() as conn:
         conn.execute(sa.text(
             "CREATE TABLE app_settings (key VARCHAR(255) PRIMARY KEY, value VARCHAR(2000) NOT NULL)"
