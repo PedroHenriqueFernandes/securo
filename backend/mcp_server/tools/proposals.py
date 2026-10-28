@@ -329,7 +329,7 @@ async def propose_create_category(
         await session.execute(
             select(Category.id, Category.name).where(
                 Category.workspace_id == ws_id,
-                Category.name.ilike(name.strip()),
+                Category.name.ilike(like_literal(name.strip()), escape="\\"),
             )
         )
     ).first()

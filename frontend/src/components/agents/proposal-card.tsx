@@ -364,6 +364,7 @@ async function applyProposal(data: ProposalData): Promise<string | void> {
       return `${res.updated} updated`
     }
     case 'create_category': {
+      rejectNameCollision(data)
       const c = await categories.create({
         name: String(p.name),
         group_id: (p.group_id as string) || undefined,
