@@ -7,12 +7,11 @@ from alembic.migration import MigrationContext
 from alembic.operations import Operations
 
 
-_MIGRATION_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "alembic"
-    / "versions"
-    / "099_registration_setting_follows_env.py"
-)
+# Found by name rather than by number, so renumbering the migration to land
+# after another one does not break this test.
+(_MIGRATION_PATH,) = (
+    Path(__file__).resolve().parent.parent / "alembic" / "versions"
+).glob("*_registration_setting_follows_env.py")
 _SPEC = importlib.util.spec_from_file_location("registration_setting_migration", _MIGRATION_PATH)
 assert _SPEC is not None and _SPEC.loader is not None
 migration = importlib.util.module_from_spec(_SPEC)
@@ -61,6 +60,6 @@ def test_upgrade_keeps_a_false_an_administrator_saved():
     assert _run("upgrade", "false") == "false"
 
 
-@pytest.mark.parametrize(("saved", "after"), [(None, "true"), ("false", "false")])
+@pytest.mark.parametrize(("saved", "after"), [(None, "true"), ("false", "false"), ("true", "true")])
 def test_downgrade_restores_the_seed_only_where_nothing_is_saved(saved, after):
     assert _run("downgrade", saved) == after
